@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setup()
     })
     
-    document.getElementById("refresh").onclick = function() {
+    /*document.getElementById("refresh").onclick = function() {
         document.getElementById("root").innerHTML = ""
         setTimeout(function() {
             chrome.runtime.getBackgroundPage(function(page) {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setup()
             })
         }, 1000)
-    }
+    }*/
     
 });
 
@@ -102,8 +102,8 @@ function renderWindow(windowdata, winnum) {
         class:"open",
         _onclick: function() {
             console.log("Open window #"+winnum)
-            //tabbro.ui_delete_window(winnum)
-            //repaint()
+            tabbro.ui_open_window(winnum)
+            repaint()
         },
         href: "#",
         title: "Duplicate window",

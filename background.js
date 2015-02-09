@@ -13,13 +13,17 @@ _tabbro_ = function() {
     // Storage engine
     this._storage = chrome.storage.local;
     
-    // Action hook - called when we've done something that potentionally could require any of the guis to be updated
+    // the next created window should be stored in the tree window at this index. null for disabled
+    this.nextCreatedWindowIndex = null
+    
+    // Action hook - called when we've done something that potentionally could require SAVING and/or any of the guis to be updated
     this.hook_repaint == null
     this.notify = function() {
         tabbro.updateCount()
         if(this.hook_repaint!=null) {
             setTimeout(this.hook_repaint, 1)
         }
+        bro.save()
     }
     
     
@@ -102,6 +106,7 @@ _tabbro_ = function() {
         if(tab.id!=null) {
             chrome.tabs.remove(tab.id)
         }
+        bro.notify()
     }
     
     
@@ -116,6 +121,7 @@ _tabbro_ = function() {
             // If the window is loaded, close it and the events fired will take care of cleanup
             chrome.windows.remove(window.id)
         }
+        bro.notify()
     }
     
     
@@ -126,6 +132,7 @@ _tabbro_ = function() {
         if(this.tree[winindex].tabs[tabindex].sticky) {
            this.tree[winindex].sticky = true
         }
+        bro.notify()
     }
     
     
@@ -136,6 +143,48 @@ _tabbro_ = function() {
         for(var i in this.tree[winindex].tabs) {
             this.tree[winindex].tabs[i].sticky = this.tree[winindex].sticky
         }
+        bro.notify()
+    }
+    
+    
+    this.ui_open_window = function(winindex) {
+        bro = this
+        // Open saved window at index winindex
+        
+        // Get the window
+        var win = this.tree[winindex]
+        
+        this.nextCreatedWindowIndex = winindex
+        
+        var moreTabsToOpen = win.tabs.slice(1)
+        
+        // Open new chrome window with only the first tab from this group
+        chrome.windows.create({
+            focused:true,
+            url:win.tabs[0].url
+        }, function(ev) {
+            var newwindowid = ev.id
+            // Open the rest of the tabs in this group
+            
+            if(moreTabsToOpen.length>0) {
+            
+                // Delete existing tabs after first from record
+                win.tabs.splice(1, 9999)
+                
+                // Recreate all tabs in new window
+                for(var i in moreTabsToOpen) {
+                    chrome.tabs.create({
+                        windowId:win.id,
+                        url:moreTabsToOpen[i].url
+                    }, function(ev) {
+                        for(var x in win.tabs) {
+                            win.tabs[x].sticky = true
+                        }
+                    })
+                }
+            }
+        })
+        
     }
     
     
@@ -252,17 +301,23 @@ _tabbro_ = function() {
             }
             // Prune tabs
             pruneTabs = pruneTabs.reverse()
+            console.log("pruneData: pruneTabs:" )
+            console.log(pruneTabs)
             for(var p in pruneTabs) {              // why the fuck is p a string?
                 this.tree[w].tabs.splice(pruneTabs[p], 1)
             }
             
         }
-        // Prune windowssave
+        // Prune windows
         pruneWindows = pruneWindows.reverse()
+        console.log("pruneData: pruneWindows:" )
+        console.log(pruneWindows)
         for(var p in pruneWindows) {      // why the fuck is p a string?
-            this.tree.splice(pruneWindows[p], 1)
+            var removed = this.tree.splice(pruneWindows[p], 1)
+            console.log("Pruned: ")
+            console.log(removed)
         }
-        console.log("iRCT tree length: " + this.tree.length)
+        console.log("after pruneData: tree length: " + this.tree.length)
     }
     
     
@@ -296,12 +351,22 @@ _tabbro_ = function() {
             if(e.type!="normal") return
             console.log("windows.onCreated")
             console.log(e)
-            bro.tree.push({
-                id: e.id,
-                tabs:[],
-                sticky: false,
-                name: ""
-            })
+            
+            if(bro.nextCreatedWindowIndex==null) {
+                bro.tree.push({
+                    id: e.id,
+                    tabs:[],
+                    sticky: false,
+                    name: ""
+                })
+            } else {
+                // We were just ordered to restore a saved window
+                // bypass adding it to the tree and update the window in our tree
+                var win = bro.tree[bro.nextCreatedWindowIndex]
+                win.id = e.id
+                //win.sticky = true
+                bro.nextCreatedWindowIndex = null;
+            }
         })
         
         
