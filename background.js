@@ -132,6 +132,10 @@ _tabbro_ = function() {
     this.ui_stick_window = function(winindex) {
         // Toggle sticky state for window at windowindex
         this.tree[winindex].sticky = !this.tree[winindex].sticky
+        // Apply same setting to every tab in the window
+        for(var i in this.tree[winindex].tabs) {
+            this.tree[winindex].tabs[i].sticky = this.tree[winindex].sticky
+        }
     }
     
     
@@ -342,10 +346,16 @@ _tabbro_ = function() {
         })
         
         
-        chrome.tabs.onUpdated.addListener(function(x) {
+        chrome.tabs.onUpdated.addListener(function(tabid) {
             //console.log("tabs.onUpdated")
-            //console.log(x)
+            //console.log(tabid)
             // TODO loading indicator when a tab is loading
+            // Update tab title
+            tab = bro.t_getTab(tabid)
+            chrome.tabs.get(tabid, function(_tab) {
+                tab.title = _tab.title
+            })
+            
         })
         
         
