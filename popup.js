@@ -38,7 +38,7 @@ function element(kind, options) {
     for(var key in options) {
         if(special.indexOf(key)==-1) {
             if(key.substr(0,3)=="_on") { // Keys prefixed with _on are treated as event listeners such as _onclick
-                if(typeof options[key] == "string") {
+                if(typeof options[key] == "string") { // if _onclick is set to "_mouseover", the  same event listener will be re-used
                     element[key.substr(1)] = options[options[key]]
                 } else {
                     element[key.substr(1)] = options[key]
