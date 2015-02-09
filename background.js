@@ -119,7 +119,7 @@ _tabbro_ = function() {
         
         // If the window isn't loaded, delete it
         if(window.id==null) {
-            this.t_removeWindow(window.id)
+            this.tree.splice(winindex, 1)
         } else {
             // If the window is loaded, close it and the events fired will take care of cleanup
             chrome.windows.remove(window.id)
@@ -359,11 +359,10 @@ _tabbro_ = function() {
     
     
     this.save = function() {
-        return
-        // Save data to sync
-        //console.log("save: ")
+        // Save data to chrome
         this._storage.set({"tabbro":this.data})
     }
+    
     
     this.addListeners = function() {
         bro = this
