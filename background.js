@@ -69,7 +69,7 @@ _tabbro_ = function() {
     this.t_addTabtoWindow = function(winid, tab, index) {
         // Add a tab record to a window specified by winid
         var win = this.t_getWindow(winid)
-        win.tabs.splice(index, 0, tab)
+        if(win) win.tabs.splice(index, 0, tab)
     }
     
     
@@ -417,7 +417,8 @@ _tabbro_ = function() {
             // TODO loading indicator when a tab is loading
             // Update tab title
             tab = bro.t_getTab(tabid)
-            chrome.tabs.get(tabid, function(_tab) {
+            
+            if(tab) chrome.tabs.get(tabid, function(_tab) {
                 tab.title = _tab.title
             })
             
