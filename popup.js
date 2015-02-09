@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function element(kind, options) {
-    var special = ["_html", "_parent", "_onclick"]
+    var special = ["_html", "_parent"]
     var element = document.createElement(kind);
     
     if(options) {
@@ -34,12 +34,13 @@ function element(kind, options) {
         if(options._parent) {
             options._parent.appendChild(element)
         }
-        if(options._onclick) {
-            element.onclick = options._onclick
-        }
     }
     for(var key in options) {
-        if(special.indexOf(key)==-1) element.setAttribute(key, options[key])
+        if(special.indexOf(key)==-1) {
+            if(key.substr(0,3)=="_on") { // Keys prefixed with _on are treated as event listeners such as _onclick
+                element[key.substr(1)] = options[key]
+            } else element.setAttribute(key, options[key])
+        }
     }
     return element
 }
@@ -63,9 +64,9 @@ function renderTree(data) {
 }
 
 function renderWindow(windowdata, winnum) {
-    var win = document.createElement('li');
+    var win = element('li', {class:(windowdata.sticky?"sticky":"")});
     
-    var label = element('span', {_html: '<i class="fa fa-square-o"></i> Window '+windowdata.id, _parent:win})
+    var label = element('span', {_html: '<i class="fa '+(windowdata.sticky?"fa-thumb-tack":"fa-square-o")+'"></i> Window '+windowdata.id, _parent:win})
     
     var options = element('div', {class:"options", _parent:label})
     
@@ -97,6 +98,22 @@ function renderWindow(windowdata, winnum) {
     })
     
     
+    var opennew = element('a', {
+        class:"open",
+        _onclick: function() {
+            console.log("Open window #"+winnum)
+            //tabbro.ui_delete_window(winnum)
+            //repaint()
+        },
+        href: "#",
+        title: "Duplicate window",
+        _html:'<i class="fa fa-external-link-square"></i>',
+        _parent:options
+    })
+    
+    
+    
+    
     var list = element("ul", {class:"window"})
     for(var i in windowdata.tabs) {
         list.appendChild(renderTab(windowdata.tabs[i], i, winnum))
@@ -108,7 +125,7 @@ function renderWindow(windowdata, winnum) {
 
 function renderTab(tabdata, tabnum, winnum) {
     var tab = element('li', {class:"clearfix"})
-    tab.innerHTML = tabdata.title + " ("+tabdata.id+")"
+    tab.innerHTML =  (tabdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')+tabdata.title + " ("+tabdata.id+")"
     
     var options = element('div', {class:"options", _parent:tab})
     
@@ -139,6 +156,19 @@ function renderTab(tabdata, tabnum, winnum) {
         _parent:options
     })
     
+    
+    var opennew = element('a', {
+        class:"open",
+        _onclick: function() {
+            console.log("Open tab #"+tabnum+" from window #"+winnum)
+            //tabbro.ui_delete_window(winnum)
+            //repaint()
+        },
+        href: "#",
+        title: "Duplicate tab",
+        _html:'<i class="fa fa-external-link"></i>',
+        _parent:options
+    })
     
     return tab
 }
