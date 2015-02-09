@@ -13,7 +13,7 @@ _tabbro_ = function() {
     // Storage engine
     this._storage = chrome.storage.local;
     
-    // Action hook - called when we've done something that potentionally would require any of the status screens be updated
+    // Action hook - called when we've done something that potentionally could require any of the guis to be updated
     this.hook_repaint == null
     this.notify = function() {
         tabbro.updateCount()
@@ -31,7 +31,10 @@ _tabbro_ = function() {
             }
         }
     }
+    
+    
     this.t_getWindowFromTab = function(tabid) {
+        // Return the window the specified tab id belongs to
         for(var w in this.tree) {
             for(var t in this.tree[w].tabs) {
                 if(this.tree[w].tabs[t].id==tabid) {
@@ -76,6 +79,8 @@ _tabbro_ = function() {
             }
         }
     }
+    
+    
     this.t_removeWindow = function(winid) {
         // Remove window
         for(var i in this.tree) {
@@ -86,9 +91,10 @@ _tabbro_ = function() {
         }
     }
     
+    
     // UI UTIL FUNCTIONS
-    // Delete tab at tabindex from window at windowindex
     this.ui_delete_tab = function(winindex, tabindex) {
+        // Delete tab at tabindex from window at windowindex
         var window = this.tree[winindex]
         var tab = window.tabs[tabindex]
         
@@ -97,8 +103,10 @@ _tabbro_ = function() {
             chrome.tabs.remove(tab.id)
         }
     }
-    // Delete window at windowindex
+    
+    
     this.ui_delete_window = function(winindex) {
+        // Delete window at windowindex
         var window = this.tree[winindex]
         
         // If the window isn't loaded, delete it
@@ -109,8 +117,10 @@ _tabbro_ = function() {
             chrome.windows.remove(window.id)
         }
     }
-    // Stick tab at tabindexfrom window at windowindex
+    
+    
     this.ui_stick_tab = function(winindex, tabindex) {
+        // Toggle sticky state for tab at tabindex from window at windowindex
         this.tree[winindex].tabs[tabindex].sticky = !this.tree[winindex].tabs[tabindex].sticky
         // Stick the window if we just stuck a tab
         if(this.tree[winindex].tabs[tabindex].sticky) {
@@ -118,18 +128,15 @@ _tabbro_ = function() {
         }
     }
     
-    // Toggle sticky state for window at windowindex
+    
     this.ui_stick_window = function(winindex) {
+        // Toggle sticky state for window at windowindex
         this.tree[winindex].sticky = !this.tree[winindex].sticky
     }
     
     
-    
-    
-    
-    
-    // Return count for badge
     this.getCount = function() {
+        // Return count of loaded tabs
         var count = 0;
         for(var w in this.tree) {
             for(var t in this.tree[w].tabs) {
@@ -222,7 +229,6 @@ _tabbro_ = function() {
     
     this.pruneData = function() {
         // If any non-sticky windows are in our data from a previous session, remove them
-        
         var pruneWindows = []
         for(var w in this.tree) {
             // Null all window IDs
@@ -242,21 +248,22 @@ _tabbro_ = function() {
             }
             // Prune tabs
             pruneTabs = pruneTabs.reverse()
-            for(var p in pruneTabs) {                 // why the fuck is p a string?
+            for(var p in pruneTabs) {              // why the fuck is p a string?
                 this.tree[w].tabs.splice(pruneTabs[p], 1)
             }
             
         }
         // Prune windowssave
         pruneWindows = pruneWindows.reverse()
-        for(var p in pruneWindows) {                 // why the fuck is p a string?
+        for(var p in pruneWindows) {      // why the fuck is p a string?
             this.tree.splice(pruneWindows[p], 1)
         }
         console.log("iRCT tree length: " + this.tree.length)
     }
     
-    // Remove non-sticky tabs from a window
+    
     this.pruneWindowsTabsForClose = function(win) {
+        // Remove non-sticky tabs from a window
         var pruneTabs = []
         for(var t in win.tabs) {
             win.tabs[t].id = null
@@ -270,15 +277,16 @@ _tabbro_ = function() {
         }
     }
     
-    // Save data to sync
+    
     this.save = function() {
+        // Save data to sync
         console.log("save: ")
         this._storage.set({"tabbro":this.data})
     }
     
     this.addListeners = function() {
         bro = this
-        console.log("addListeners: Adding listeners")
+        
         // Add window listeners
         chrome.windows.onCreated.addListener(function(e) {
             if(e.type!="normal") return
@@ -291,6 +299,8 @@ _tabbro_ = function() {
                 name: ""
             })
         })
+        
+        
         chrome.windows.onRemoved.addListener(function(windowid) {
             console.log("windows.onRemoved")
             //console.log(windowid)
@@ -301,25 +311,20 @@ _tabbro_ = function() {
                 // and remove non-sticky tabs in it
                 bro.pruneWindowsTabsForClose(thewindow)
             } else {
-                // Look for sticky tabs in the window
-                /*var contains_sticky = false
-                for(var i in thewindow.tabs) {
-                    
-                }*/
-                
-                
-                
                 // Not sticky = delete window and contained tabs
                 bro.t_removeWindow(windowid)
             }
             
             bro.notify()
         })
+        
+        
         chrome.windows.onFocusChanged.addListener(function(x) {
             console.log("windows.onFocusChanged")
             console.log(x)
         })
-    
+        
+        
         // Add tab listeners
         chrome.tabs.onCreated.addListener(function(e) {
             console.log("tabs.onCreated")
@@ -335,36 +340,50 @@ _tabbro_ = function() {
             
             bro.notify()
         })
+        
+        
         chrome.tabs.onUpdated.addListener(function(x) {
             //console.log("tabs.onUpdated")
             //console.log(x)
             // TODO loading indicator when a tab is loading
         })
+        
+        
         chrome.tabs.onMoved.addListener(function(x) {
             console.log("tabs.onMoved")
             console.log(x)
             // TODO re-order data model when tabs are re-ordered
         })
+        
+        
         chrome.tabs.onActivated.addListener(function(x) {
             //console.log("tabs.onActivated")
             //console.log(x)
             // TODO indicate that this tab is the active one
         })
+        
+        
         chrome.tabs.onHighlighted.addListener(function(x) {
             //console.log("tabs.onHighlighted")
             //console.log(x)
             // This seems the same as tabs.onActivated?
         })
+        
+        
         chrome.tabs.onDetached.addListener(function(x) {
             console.log("tabs.onDetached")
             console.log(x)
             // TODO this is when the user pulls a tab off the window
         })
+        
+        
         chrome.tabs.onAttached.addListener(function(x) {
             console.log("tabs.onAttached")
             console.log(x)
             // TODO this is when a the user drops a tab onto another window
         })
+        
+        
         chrome.tabs.onRemoved.addListener(function(tabid) {
             console.log("tabs.onRemoved")
             console.log(tabid)
@@ -384,14 +403,14 @@ _tabbro_ = function() {
             
             bro.notify()
         })
+        
+        
         chrome.tabs.onReplaced.addListener(function(x) {
             //console.log("tabs.onReplaced")
             //console.log(x)
             // TODO handle when a tab is inexplicable replaced with another tab
         })
     }
-    
-    
     
     this.load()
 }
