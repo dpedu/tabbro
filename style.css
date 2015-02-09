@@ -64,10 +64,13 @@ table {
 /* GLOBAL */
 body {
     width: 420px;
+    height: auto;
     padding: 5px 0px;
     margin: 0;
     font-family: Open sans;
     font-size: 12px;
+    max-height: 700px;
+    overflow-y: auto;
 }
 
 
@@ -75,7 +78,7 @@ body {
 .options {
     position: absolute;
     top: -3px;
-    right: 0px;
+    right: 10px;
     display: none;
     background-color: #fff;
     padding: 3px;
@@ -91,7 +94,7 @@ li:hover>.options, li:hover>span>.options {
 
 
 
-
+/* MAIN TREE */
 ul#root {
     
 }
@@ -121,18 +124,3 @@ ul#root > li > ul > li > span {
 ul#root > li > ul > li:nth-child(2n+1) {
     background-color: rgba(0,0,0,0.05);
 }
-
-
-
-
-
-
-ul.window {
-    padding
-    padding-left: 25px;
-/*    list-style: disc;*/
-}
-
-
-
-

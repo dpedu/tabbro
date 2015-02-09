@@ -105,6 +105,9 @@ _tabbro_ = function() {
         // Close tab if it's active
         if(tab.id!=null) {
             chrome.tabs.remove(tab.id)
+        } else {
+            // Delete from tree
+            this.tree[winindex].tabs.splice(tabindex, 1)
         }
         bro.notify()
     }
@@ -356,6 +359,7 @@ _tabbro_ = function() {
     
     
     this.save = function() {
+        return
         // Save data to sync
         //console.log("save: ")
         this._storage.set({"tabbro":this.data})

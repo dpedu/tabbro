@@ -118,7 +118,7 @@ function renderWindow(windowdata, winnum) {
     var deletewindow = element('a', {
         class:"delete",
         _onclick: function() {
-            //console.log("Delete window #"+winnum)
+            console.log("Delete window #"+winnum)
             tabbro.ui_delete_window(winnum)
             repaint()
         },
@@ -192,7 +192,7 @@ function renderTab(tabdata, tabnum, winnum) {
     var deletetab = element('a', {
         class:"delete",
         _onclick: function() {
-            //console.log("Delete tab #"+tabnum+" in window #"+winnum)
+            console.log("Delete tab #"+tabnum+" in window #"+winnum)
             tabbro.ui_delete_tab(winnum, tabnum)
             repaint()
         },
