@@ -131,20 +131,20 @@ _tabbro_ = function() {
     // Return count for badge
     this.getCount = function() {
         var count = 0;
-        chrome.windows.getAll(function(_windows){
-            for(var w in _windows) {
-                chrome.tabs.getAllInWindow(_windows[w].id, function(_tabs){
-                    count++;
-                })
+        for(var w in this.tree) {
+            for(var t in this.tree[w].tabs) {
+                if(this.tree[w].tabs[t].id!=null) {
+                    count++
+                }
             }
-        })
-        return count+"";
+        }
+        return count;
     }
     
     
     this.updateCount = function() {
         // Update open tab count badge
-        chrome.browserAction.setBadgeText({"text":this.getCount()})
+        chrome.browserAction.setBadgeText({"text":this.getCount()+""})
     }
     
     
@@ -181,8 +181,6 @@ _tabbro_ = function() {
         // Add evnt listeners
         this.addListeners()
         //console.log("Tabbro v" + this.__VERSION + " ready!")
-        // Update open tab count badge
-        this.updateCount()
     }
     
     
@@ -214,6 +212,8 @@ _tabbro_ = function() {
                         })
                     }
                     bro.save()
+                    // Update open tab count badge
+                    bro.updateCount()
                 })
             }
         })
