@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "content_security_policy": "script-src 'self'; object-src 'self' https://fonts.googleapis.com/;",
     "name": "TAB BRO",
-    "description": "I'm your bro and manage your tabs",
+    "description": "I'm your bro and I'll manage your tabs",
     "version": "1.0",
     "browser_action": {
         "default_icon": "icon.png",
