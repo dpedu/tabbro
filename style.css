@@ -63,10 +63,11 @@ table {
 
 /* GLOBAL */
 body {
-    width: 640px;
-    padding: 10px 10px 10px 10px;
+    width: 420px;
+    padding: 5px 0px;
     margin: 0;
     font-family: Open sans;
+    font-size: 12px;
 }
 
 
@@ -74,7 +75,7 @@ body {
 .options {
     position: absolute;
     top: -3px;
-    left: 0px;
+    right: 0px;
     display: none;
     background-color: #fff;
     padding: 3px;
@@ -94,54 +95,36 @@ li:hover>.options, li:hover>span>.options {
 ul#root {
     
 }
-ul#root > li {
-    margin-bottom: 20px;
-}
 ul#root > li:nth-child(2n) {
     background-color: rgba(0,0,0,0.05);
 }
 ul#root > li > span {
-    min-height: 25px;
     display: block;
+    padding: 0px 10px 5px 10px;
 }
 ul#root li {
     position: relative;
-    min-height: 25px;
+    padding: 5px 0px;
 }
-ul#root > li > ul {
-    margin-left: 30px;
+ul#root > li {
+    padding-bottom: 0px
 }
-
-ul#root > li > ul > li:nth-child(2n) {
+ul#root > li > ul > li {
+    padding-left: 30px;
+}
+ul#root > li > ul > li > span {
+    overflow-x: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+ul#root > li > ul > li:nth-child(2n+1) {
     background-color: rgba(0,0,0,0.05);
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-.wrapper {
-    
-}
-
-
-ul#root > li {
-    margin-bottom: 10px;
-    overflow-x: hidden; 
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
 
 ul.window {

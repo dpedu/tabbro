@@ -38,7 +38,11 @@ function element(kind, options) {
     for(var key in options) {
         if(special.indexOf(key)==-1) {
             if(key.substr(0,3)=="_on") { // Keys prefixed with _on are treated as event listeners such as _onclick
-                element[key.substr(1)] = options[key]
+                if(typeof options[key] == "string") {
+                    element[key.substr(1)] = options[options[key]]
+                } else {
+                    element[key.substr(1)] = options[key]
+                }
             } else element.setAttribute(key, options[key])
         }
     }
@@ -66,14 +70,41 @@ function renderTree(data) {
 function renderWindow(windowdata, winnum) {
     var win = element('li', {class:(windowdata.sticky?"sticky":"")});
     
-    var label = element('span', {_html: '<i class="fa '+(windowdata.sticky?"fa-thumb-tack":"fa-square-o")+'"></i> Window '+windowdata.id, _parent:win})
+    var label = element('span', {class:"name-line", _parent:win})
+    var label_icon = element('span', {class:"name-icon", _parent:label, _html:(windowdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'<i class="fa fa-square-o"></i> ')})
+    var label_name = element('span', {class:"name-string", _parent:label, _html:windowdata.name, _ondblclick:function(){
+        var namestringspan = this
+        var name = namestringspan.innerHTML
+        
+        namestringspan.innerHTML = ""
+        
+        var input = element('input', {
+            _parent: namestringspan,
+            value:name,
+            type:"text",
+            _onblur:function(ev){
+                if(ev && ev.keyCode) {
+                    if(ev.keyCode!=13) {
+                        return
+                    }
+                }
+                
+                console.log("Rename window #"+winnum+" to "+this.value)
+                tabbro.ui_rename_window(winnum, this.value)
+                namestringspan.innerHTML = this.value
+            }, _onkeyup:"_onblur"
+        })
+        
+        input.focus()
+        input.setSelectionRange(0,9999)
+    }})
     
-    var options = element('div', {class:"options", _parent:label})
+    var options = element('div', {class:"options", _parent:win})
     
     var stickunstick = element('a', {
         class:"unstick"+(windowdata.sticky?" stuck":""),
         _onclick: function() {
-            console.log("Stuck window #"+winnum)
+            //console.log("Stuck window #"+winnum)
             tabbro.ui_stick_window(winnum)
             repaint()
         },
@@ -87,7 +118,7 @@ function renderWindow(windowdata, winnum) {
     var deletewindow = element('a', {
         class:"delete",
         _onclick: function() {
-            console.log("Delete window #"+winnum)
+            //console.log("Delete window #"+winnum)
             tabbro.ui_delete_window(winnum)
             repaint()
         },
@@ -97,11 +128,24 @@ function renderWindow(windowdata, winnum) {
         _parent:options
     })
     
+    /*var rename = element('a', {
+        class:"rename",
+        _onclick: function() {
+            //console.log("Open window #"+winnum)
+            //tabbro.ui_open_window(winnum)
+            repaint()
+        },
+        href: "#",
+        title: "Info",
+        _html:'<i class="fa fa-info-circle"></i>',
+        _parent:options
+    })*/
+    
     
     var opennew = element('a', {
         class:"open",
         _onclick: function() {
-            console.log("Open window #"+winnum)
+            //console.log("Open window #"+winnum)
             tabbro.ui_open_window(winnum)
             repaint()
         },
@@ -110,8 +154,6 @@ function renderWindow(windowdata, winnum) {
         _html:'<i class="fa fa-external-link-square"></i>',
         _parent:options
     })
-    
-    
     
     
     var list = element("ul", {class:"window"})
@@ -125,14 +167,18 @@ function renderWindow(windowdata, winnum) {
 
 function renderTab(tabdata, tabnum, winnum) {
     var tab = element('li', {class:"clearfix"})
-    tab.innerHTML =  (tabdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')+tabdata.title + " ("+tabdata.id+")"
+    
+    var label = element('span', {class:"name-line", _parent:tab})
+    var label_icon = element('span', {class:"name-icon", _parent:label, _html:(tabdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')})
+    var label_name = element('span', {class:"name-string", _parent:label, _html:tabdata.title + " ("+tabdata.id+")"})
+    
     
     var options = element('div', {class:"options", _parent:tab})
     
     var stickunstick = element('a', {
         class:"unstick"+(tabdata.sticky?" stuck":""),
         _onclick: function() {
-            console.log("Stuck tab #"+tabnum+" in window #"+winnum)
+            //console.log("Stuck tab #"+tabnum+" in window #"+winnum)
             tabbro.ui_stick_tab(winnum, tabnum)
             repaint()
         },
@@ -146,7 +192,7 @@ function renderTab(tabdata, tabnum, winnum) {
     var deletetab = element('a', {
         class:"delete",
         _onclick: function() {
-            console.log("Delete tab #"+tabnum+" in window #"+winnum)
+            //console.log("Delete tab #"+tabnum+" in window #"+winnum)
             tabbro.ui_delete_tab(winnum, tabnum)
             repaint()
         },
@@ -160,9 +206,9 @@ function renderTab(tabdata, tabnum, winnum) {
     var opennew = element('a', {
         class:"open",
         _onclick: function() {
-            console.log("Open tab #"+tabnum+" from window #"+winnum)
-            //tabbro.ui_delete_window(winnum)
-            //repaint()
+            //console.log("Open tab #"+tabnum+" from window #"+winnum)
+            tabbro.ui_open_tab(winnum, tabnum)
+            repaint()
         },
         href: "#",
         title: "Duplicate tab",

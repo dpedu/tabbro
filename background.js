@@ -177,6 +177,7 @@ _tabbro_ = function() {
                         windowId:win.id,
                         url:moreTabsToOpen[i].url
                     }, function(ev) {
+                        // Mark tab as sticky again
                         for(var x in win.tabs) {
                             win.tabs[x].sticky = true
                         }
@@ -184,8 +185,25 @@ _tabbro_ = function() {
                 }
             }
         })
-        
     }
+    
+    
+    this.ui_open_tab = function(winindex, tabindex) {
+        // Open a single tab
+        var tab = this.tree[winindex].tabs[tabindex]
+        chrome.windows.create({
+            focused:true,
+            url:tab.url
+        }, function(ev) {})
+    }
+    
+    this.ui_rename_window = function(winindex, newname) {
+        this.tree[winindex].name = newname
+        bro.notify()
+    }
+    
+    
+    
     
     
     this.getCount = function() {
@@ -215,7 +233,7 @@ _tabbro_ = function() {
         this._storage.get("tabbro", function(_data){
             // If there's no data we get {}
             if(_data.tabbro==undefined) {
-                console.log("setup: initializing tabbro")
+                //console.log("setup: initializing tabbro")
                 bro.tree = []
                 bro.data = {
                     version: bro.__VERSION,
@@ -255,12 +273,12 @@ _tabbro_ = function() {
                     id: _windows[w].id,
                     tabs:[],
                     sticky: false,
-                    name: ""
+                    name: "Window"
                 })
                 
                 // Get all tabs in this window
                 chrome.tabs.getAllInWindow(_windows[w].id, function(_tabs){
-                    console.log(_tabs)
+                    //console.log(_tabs)
                     for(var i in _tabs) {
                         var w = bro.t_getWindow(_tabs[i].windowId)
                         w.tabs.push({
@@ -268,7 +286,7 @@ _tabbro_ = function() {
                             title: _tabs[i].title,
                             url: _tabs[i].url,
                             sticky: false,
-                            name: ""
+                            name: "Tab"
                         })
                     }
                     bro.save()
@@ -301,8 +319,8 @@ _tabbro_ = function() {
             }
             // Prune tabs
             pruneTabs = pruneTabs.reverse()
-            console.log("pruneData: pruneTabs:" )
-            console.log(pruneTabs)
+            //console.log("pruneData: pruneTabs:" )
+            //console.log(pruneTabs)
             for(var p in pruneTabs) {              // why the fuck is p a string?
                 this.tree[w].tabs.splice(pruneTabs[p], 1)
             }
@@ -310,14 +328,14 @@ _tabbro_ = function() {
         }
         // Prune windows
         pruneWindows = pruneWindows.reverse()
-        console.log("pruneData: pruneWindows:" )
-        console.log(pruneWindows)
+        //console.log("pruneData: pruneWindows:" )
+        //console.log(pruneWindows)
         for(var p in pruneWindows) {      // why the fuck is p a string?
             var removed = this.tree.splice(pruneWindows[p], 1)
-            console.log("Pruned: ")
-            console.log(removed)
+            //console.log("Pruned: ")
+            //console.log(removed)
         }
-        console.log("after pruneData: tree length: " + this.tree.length)
+        //console.log("after pruneData: tree length: " + this.tree.length)
     }
     
     
@@ -339,7 +357,7 @@ _tabbro_ = function() {
     
     this.save = function() {
         // Save data to sync
-        console.log("save: ")
+        //console.log("save: ")
         this._storage.set({"tabbro":this.data})
     }
     
@@ -349,15 +367,15 @@ _tabbro_ = function() {
         // Add window listeners
         chrome.windows.onCreated.addListener(function(e) {
             if(e.type!="normal") return
-            console.log("windows.onCreated")
-            console.log(e)
+            //console.log("windows.onCreated")
+            //console.log(e)
             
             if(bro.nextCreatedWindowIndex==null) {
                 bro.tree.push({
                     id: e.id,
                     tabs:[],
                     sticky: false,
-                    name: ""
+                    name: "New Window"
                 })
             } else {
                 // We were just ordered to restore a saved window
@@ -371,7 +389,7 @@ _tabbro_ = function() {
         
         
         chrome.windows.onRemoved.addListener(function(windowid) {
-            console.log("windows.onRemoved")
+            //console.log("windows.onRemoved")
             //console.log(windowid)
             var thewindow = bro.t_getWindow(windowid)
             if(thewindow.sticky) {
@@ -389,15 +407,15 @@ _tabbro_ = function() {
         
         
         chrome.windows.onFocusChanged.addListener(function(x) {
-            console.log("windows.onFocusChanged")
-            console.log(x)
+            //console.log("windows.onFocusChanged")
+            //console.log(x)
         })
         
         
         // Add tab listeners
         chrome.tabs.onCreated.addListener(function(e) {
-            console.log("tabs.onCreated")
-            console.log(e)
+            //console.log("tabs.onCreated")
+            //console.log(e)
             
             bro.t_addTabtoWindow(e.windowId, {
                 id: e.id,
@@ -426,8 +444,8 @@ _tabbro_ = function() {
         
         
         chrome.tabs.onMoved.addListener(function(x) {
-            console.log("tabs.onMoved")
-            console.log(x)
+            //console.log("tabs.onMoved")
+            //console.log(x)
             // TODO re-order data model when tabs are re-ordered
         })
         
@@ -447,22 +465,22 @@ _tabbro_ = function() {
         
         
         chrome.tabs.onDetached.addListener(function(x) {
-            console.log("tabs.onDetached")
-            console.log(x)
+            //console.log("tabs.onDetached")
+            //console.log(x)
             // TODO this is when the user pulls a tab off the window
         })
         
         
         chrome.tabs.onAttached.addListener(function(x) {
-            console.log("tabs.onAttached")
-            console.log(x)
+            //console.log("tabs.onAttached")
+            //console.log(x)
             // TODO this is when a the user drops a tab onto another window
         })
         
         
         chrome.tabs.onRemoved.addListener(function(tabid) {
-            console.log("tabs.onRemoved")
-            console.log(tabid)
+            //console.log("tabs.onRemoved")
+            //console.log(tabid)
             
             
             var thewindow = bro.t_getWindowFromTab(tabid)
