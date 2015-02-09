@@ -72,6 +72,24 @@ body {
     max-height: 700px;
     overflow-y: auto;
 }
+@-webkit-keyframes nopenopenope {
+    0% {
+        left: 0px;
+    }
+    25% {
+        left: -10px;
+    }
+    75% {
+        left: 10px;
+    }
+    100% {
+        left: 0px;
+    }
+}
+.nope {
+    position: relative;
+    -webkit-animation: nopenopenope .15s linear 0s 3 normal;
+}
 
 
 /* Options panel appears on hove */

@@ -81,6 +81,7 @@ function renderWindow(windowdata, winnum) {
         var input = element('input', {
             _parent: namestringspan,
             value:name,
+            "data-original":name,
             type:"text",
             _onblur:function(ev){
                 if(ev && ev.keyCode) {
@@ -88,7 +89,17 @@ function renderWindow(windowdata, winnum) {
                         return
                     }
                 }
-                
+                if(this.value.trim().length==0) {
+                    this.value = this.getAttribute("data-original")
+                    this.focus()
+                    this.setSelectionRange(0,9999)
+                    this.classList.add("nope")
+                    var theinput = this
+                    setTimeout(function(){
+                        theinput.classList.remove("nope")
+                    }, 450)
+                    return
+                }
                 console.log("Rename window #"+winnum+" to "+this.value)
                 tabbro.ui_rename_window(winnum, this.value)
                 namestringspan.innerHTML = this.value
