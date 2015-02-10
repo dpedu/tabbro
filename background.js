@@ -75,7 +75,7 @@ _tabbro_ = function() {
     
     this.t_removeTab = function(tabid) {
         // Removed tab record
-        var thewindow = bro.t_getWindowFromTab(tabid)
+        var thewindow = this.t_getWindowFromTab(tabid)
         for(var i in thewindow.tabs) {
             if(thewindow.tabs[i].id == tabid) {
                 thewindow.tabs.splice(i, 1)
@@ -289,7 +289,8 @@ _tabbro_ = function() {
                             title: _tabs[i].title,
                             url: _tabs[i].url,
                             sticky: false,
-                            name: "Tab"
+                            name: "Tab",
+                            icon: (_tabs[i].favIconUrl?_tabs[i].favIconUrl:null)
                         })
                     }
                     bro.save()
@@ -441,6 +442,9 @@ _tabbro_ = function() {
             
             if(tab) chrome.tabs.get(tabid, function(_tab) {
                 tab.title = _tab.title
+                if(_tab.favIconUrl) {
+                    tab.icon = _tab.favIconUrl;
+                }
             })
             
         })
