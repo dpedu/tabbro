@@ -23,7 +23,7 @@ _tabbro_ = function() {
         if(this.hook_repaint!=null) {
             setTimeout(this.hook_repaint, 1)
         }
-        bro.save()
+        this.save()
     }
     
     
@@ -109,7 +109,7 @@ _tabbro_ = function() {
             // Delete from tree
             this.tree[winindex].tabs.splice(tabindex, 1)
         }
-        bro.notify()
+        this.notify()
     }
     
     
@@ -124,7 +124,7 @@ _tabbro_ = function() {
             // If the window is loaded, close it and the events fired will take care of cleanup
             chrome.windows.remove(window.id)
         }
-        bro.notify()
+        this.notify()
     }
     
     
@@ -135,7 +135,7 @@ _tabbro_ = function() {
         if(this.tree[winindex].tabs[tabindex].sticky) {
            this.tree[winindex].sticky = true
         }
-        bro.notify()
+        this.notify()
     }
     
     
@@ -146,12 +146,12 @@ _tabbro_ = function() {
         for(var i in this.tree[winindex].tabs) {
             this.tree[winindex].tabs[i].sticky = this.tree[winindex].sticky
         }
-        bro.notify()
+        this.notify()
     }
     
     
     this.ui_open_window = function(winindex) {
-        bro = this
+        var bro = this
         // Open saved window at index winindex
         
         // Get the window
@@ -202,7 +202,7 @@ _tabbro_ = function() {
     
     this.ui_rename_window = function(winindex, newname) {
         this.tree[winindex].name = newname
-        bro.notify()
+        this.bro.notify()
     }
     
     
@@ -231,7 +231,7 @@ _tabbro_ = function() {
     
     // Entry point - load previous session data or create a database 
     this.load = function() {
-        bro = this
+        var bro = this
         // Load data from sync
         this._storage.get("tabbro", function(_data){
             // If there's no data we get {}
@@ -267,7 +267,7 @@ _tabbro_ = function() {
     
     this.loadInitialTree = function() {
         // Add all open windows/tabs to the database tree
-        bro = this
+        var bro = this
         // Get all windows
         chrome.windows.getAll(function(_windows){
             for(var w in _windows) {
@@ -365,7 +365,7 @@ _tabbro_ = function() {
     
     
     this.addListeners = function() {
-        bro = this
+        var bro = this
         
         // Add window listeners
         chrome.windows.onCreated.addListener(function(e) {
