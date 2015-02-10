@@ -131,7 +131,10 @@ ul#root > li {
     padding-bottom: 0px
 }
 ul#root > li > ul > li {
-    padding-left: 30px;
+    padding-left: 50px;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    background-position: 30px center;
 }
 ul#root > li > ul > li > span {
     overflow-x: hidden; 
