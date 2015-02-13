@@ -453,10 +453,24 @@ _tabbro_ = function() {
         })
         
         
-        chrome.tabs.onMoved.addListener(function(x) {
-            console.log("tabs.onMoved "+x)
-            console.log(x)
-            // TODO re-order data model when tabs are re-ordered
+        chrome.tabs.onMoved.addListener(function(tabid) {
+            console.log("tabs.onMoved "+tabid)
+            
+            // Fetch tab
+            chrome.tabs.get(tabid, function(_tab) {
+                // Fetch window
+                var thewindow = bro.t_getWindow(_tab.windowId)
+                
+                // Find it in the array
+                var thetab = bro.t_getTab(tabid);
+                var tabindex = thewindow.tabs.indexOf(thetab);
+                
+                // Splice it out
+                thewindow.tabs.splice(tabindex, 1);
+                
+                // Splice it into the new spot
+                thewindow.tabs.splice(_tab.index, 0, thetab);
+            })
         })
         
         
