@@ -186,7 +186,7 @@ function renderTab(tabdata, tabnum, winnum) {
     
     var label = element('span', {class:"name-line", _parent:tab})
     var label_icon = element('span', {class:"name-icon", _parent:label, _html:(tabdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')})
-    var label_name = element('span', {class:"name-string", _parent:label, _html:tabdata.title + " ("+tabdata.id+")"})
+    var label_name = element('span', {class:"name-string", _parent:label, _html:tabdata.title})
     
     var options = element('div', {class:"options", _parent:tab})
     
