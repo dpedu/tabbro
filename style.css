@@ -127,7 +127,11 @@ ul#root li {
     padding: 5px 0px;
 }
 ul#root > li {
-    padding-bottom: 0px
+    padding-bottom: 0px;
+    border-bottom: 1px solid #888;
+}
+ul#root > li:last-child {
+    border-bottom: 0px;
 }
 ul#root > li > ul > li {
     padding-left: 40px;
