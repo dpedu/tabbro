@@ -437,14 +437,14 @@ _tabbro_ = function() {
         
         
         chrome.tabs.onUpdated.addListener(function(tabid) {
-            //console.log("tabs.onUpdated")
-            //console.log(tabid)
             // TODO loading indicator when a tab is loading
+            // TOOO determine if other attributes need to be tracked
             // Update tab title
             tab = bro.t_getTab(tabid)
             
             if(tab) chrome.tabs.get(tabid, function(_tab) {
                 tab.title = _tab.title
+                tab.url = _tab.url
                 if(_tab.favIconUrl) {
                     tab.icon = _tab.favIconUrl;
                 }
