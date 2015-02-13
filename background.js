@@ -10,6 +10,9 @@ _tabbro_ = function() {
     // Tab tree
     this.tree = null;
     
+    // Detached tabs
+    this.detached_tabs = [];
+    
     // Storage engine
     this._storage = chrome.storage.local;
     
@@ -371,7 +374,7 @@ _tabbro_ = function() {
         // Add window listeners
         chrome.windows.onCreated.addListener(function(e) {
             if(e.type!="normal") return
-            //console.log("windows.onCreated")
+            console.log("windows.onCreated: "+e.id)
             //console.log(e)
             
             if(bro.nextCreatedWindowIndex==null) {
@@ -393,7 +396,7 @@ _tabbro_ = function() {
         
         
         chrome.windows.onRemoved.addListener(function(windowid) {
-            //console.log("windows.onRemoved")
+            console.log("windows.onRemoved")
             //console.log(windowid)
             var thewindow = bro.t_getWindow(windowid)
             if(thewindow.sticky) {
@@ -418,7 +421,7 @@ _tabbro_ = function() {
         
         // Add tab listeners
         chrome.tabs.onCreated.addListener(function(e) {
-            //console.log("tabs.onCreated")
+            console.log("tabs.onCreated")
             //console.log(e)
             
             bro.t_addTabtoWindow(e.windowId, {
@@ -451,8 +454,8 @@ _tabbro_ = function() {
         
         
         chrome.tabs.onMoved.addListener(function(x) {
-            //console.log("tabs.onMoved")
-            //console.log(x)
+            console.log("tabs.onMoved "+x)
+            console.log(x)
             // TODO re-order data model when tabs are re-ordered
         })
         
@@ -471,22 +474,30 @@ _tabbro_ = function() {
         })
         
         
-        chrome.tabs.onDetached.addListener(function(x) {
-            //console.log("tabs.onDetached")
-            //console.log(x)
-            // TODO this is when the user pulls a tab off the window
+        chrome.tabs.onDetached.addListener(function(tabid) {
+            // Remove tab from it's window
+            var tab = bro.t_getTab(tabid)
+            bro.t_removeTab(tabid)
+            
+            // Add tab to bro.detached_tabs
+            bro.detached_tabs[tabid] = tab
         })
         
         
-        chrome.tabs.onAttached.addListener(function(x) {
-            //console.log("tabs.onAttached")
-            //console.log(x)
-            // TODO this is when a the user drops a tab onto another window
+        chrome.tabs.onAttached.addListener(function(tabid) {
+            // Remove from bro.detached_tabs
+            var tab = bro.detached_tabs.splice(tabid, 1)[0]
+            
+            // Add tab to window
+            chrome.tabs.get(tabid, function(_tab) {
+                var thewindow = bro.t_getWindow(_tab.windowId)
+                thewindow.tabs.splice(_tab.index, 0, tab)
+            })
         })
         
         
         chrome.tabs.onRemoved.addListener(function(tabid) {
-            //console.log("tabs.onRemoved")
+            console.log("tabs.onRemoved "+tabid)
             //console.log(tabid)
             
             

@@ -71,7 +71,7 @@ function renderWindow(windowdata, winnum) {
     var win = element('li', {class:(windowdata.sticky?"sticky":"")});
     
     var label = element('span', {class:"name-line", _parent:win})
-    var label_icon = element('span', {class:"name-icon", _parent:label, _html:(windowdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'<i class="fa fa-square-o"></i> ')})
+    var label_icon = element('span', {class:"name-icon", _parent:label, _html:(windowdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')})
     var label_name = element('span', {class:"name-string", _parent:label, _html:windowdata.name, _ondblclick:function(){
         var namestringspan = this
         var name = namestringspan.innerHTML

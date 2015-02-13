@@ -57,8 +57,6 @@ table {
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:700,400);
 
 
-
-
 /* STYLES */
 
 /* GLOBAL */
@@ -122,6 +120,7 @@ ul#root > li:nth-child(2n) {
 ul#root > li > span {
     display: block;
     padding: 0px 10px 5px 10px;
+    font-weight: bold;
 }
 ul#root li {
     position: relative;
@@ -131,10 +130,10 @@ ul#root > li {
     padding-bottom: 0px
 }
 ul#root > li > ul > li {
-    padding-left: 50px;
+    padding-left: 40px;
     background-repeat: no-repeat;
     background-size: 16px 16px;
-    background-position: 30px center;
+    background-position: 20px center;
 }
 ul#root > li > ul > li > span {
     overflow-x: hidden; 
