@@ -295,7 +295,8 @@ _tabbro_ = function() {
                             url: _tabs[i].url,
                             sticky: false,
                             name: "Tab",
-                            icon: (_tabs[i].favIconUrl?_tabs[i].favIconUrl:null)
+                            icon: (_tabs[i].favIconUrl?_tabs[i].favIconUrl:null),
+                            pinned: _tabs[i].pinned
                         })
                     }
                     bro.save()
@@ -431,12 +432,12 @@ _tabbro_ = function() {
                 title: e.title,
                 url: e.url,
                 sticky: false,
-                name: ""
+                name: "",
+                pinned: e.pinned
             }, e.index)
             
             bro.notify()
         })
-        
         
         chrome.tabs.onUpdated.addListener(function(tabid) {
             // TODO loading indicator when a tab is loading
@@ -447,13 +448,13 @@ _tabbro_ = function() {
             if(tab) chrome.tabs.get(tabid, function(_tab) {
                 tab.title = _tab.title
                 tab.url = _tab.url
+                tab.pinned = _tab.pinned
                 if(_tab.favIconUrl) {
                     tab.icon = _tab.favIconUrl;
                 }
             })
             
         })
-        
         
         chrome.tabs.onMoved.addListener(function(tabid) {
             console.log("tabs.onMoved "+tabid)
@@ -475,20 +476,17 @@ _tabbro_ = function() {
             })
         })
         
-        
         chrome.tabs.onActivated.addListener(function(x) {
             //console.log("tabs.onActivated")
             //console.log(x)
             // TODO indicate that this tab is the active one
         })
         
-        
         chrome.tabs.onHighlighted.addListener(function(x) {
             //console.log("tabs.onHighlighted")
             //console.log(x)
             // This seems the same as tabs.onActivated?
         })
-        
         
         chrome.tabs.onDetached.addListener(function(tabid) {
             // Remove tab from it's window
@@ -498,7 +496,6 @@ _tabbro_ = function() {
             // Add tab to bro.detached_tabs
             bro.detached_tabs[tabid] = tab
         })
-        
         
         chrome.tabs.onAttached.addListener(function(tabid) {
             // Remove from bro.detached_tabs
@@ -510,7 +507,6 @@ _tabbro_ = function() {
                 thewindow.tabs.splice(_tab.index, 0, tab)
             })
         })
-        
         
         chrome.tabs.onRemoved.addListener(function(tabid) {
             console.log("tabs.onRemoved "+tabid)
@@ -531,7 +527,6 @@ _tabbro_ = function() {
             
             bro.notify()
         })
-        
         
         chrome.tabs.onReplaced.addListener(function(x) {
             //console.log("tabs.onReplaced")
