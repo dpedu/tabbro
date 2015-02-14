@@ -18,7 +18,7 @@ _tabbro_ = function() {
     // Detached tabs
     this.detached_tabs = [];
     
-    // Storage engine
+    // Storage engines
     this._storage = chrome.storage.local;
     this._cloudstorage = chrome.storage.local;
     
@@ -75,6 +75,9 @@ _tabbro_ = function() {
         // Add a tab record to a window specified by winid
         var win = this.t_getWindow(winid)
         if(win) win.tabs.splice(index, 0, tab)
+        if(this.options.autoStickyTabs && win.sticky) {
+            tab.sticky = true;
+        }
     }
     
     this.t_removeTab = function(tabid) {
@@ -407,7 +410,6 @@ _tabbro_ = function() {
             }
         })
         
-        
         chrome.windows.onRemoved.addListener(function(windowid) {
             console.log("windows.onRemoved")
             //console.log(windowid)
@@ -425,18 +427,15 @@ _tabbro_ = function() {
             bro.notify()
         })
         
-        
         chrome.windows.onFocusChanged.addListener(function(x) {
             //console.log("windows.onFocusChanged")
             //console.log(x)
         })
         
-        
         // Add tab listeners
         chrome.tabs.onCreated.addListener(function(e) {
             console.log("tabs.onCreated")
             //console.log(e)
-            
             bro.t_addTabtoWindow(e.windowId, {
                 id: e.id,
                 title: e.title,
