@@ -41,7 +41,7 @@ function setup() {
     dumpout.onclick = function() {
         this.setSelectionRange(0,9999999)
     }
-    dumpout.onkeyup = dumpout.onchange = dumpout.onkeydown = function() {
+    dumpout.onkeyup = dumpout.onchange = function() {
         this.value = JSON.stringify(tabbro.tree)
     }
     
