@@ -17,5 +17,6 @@
         "unlimitedStorage",
         "activeTab",
         "notifications", "idle", "chrome://favicon/"
-     ]
+    ],
+    "options_page": "options.html"
 }

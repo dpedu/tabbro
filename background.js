@@ -1,6 +1,11 @@
 
 _tabbro_ = function() {
     
+    // Options
+    this.options = {
+        "autoStickyTabs":true,
+    }
+    
     // Database version
     this.__VERSION = 1;
     
@@ -15,12 +20,14 @@ _tabbro_ = function() {
     
     // Storage engine
     this._storage = chrome.storage.local;
+    this._cloudstorage = chrome.storage.local;
     
     // the next created window should be stored in the tree window at this index. null for disabled
     this.nextCreatedWindowIndex = null
     
     // Action hook - called when we've done something that potentionally could require SAVING and/or any of the guis to be updated
     this.hook_repaint == null
+    
     this.notify = function() {
         tabbro.updateCount()
         if(this.hook_repaint!=null) {
@@ -28,7 +35,6 @@ _tabbro_ = function() {
         }
         this.save()
     }
-    
     
     // TREE HELPERS
     this.t_getWindow = function(winid) {
@@ -38,7 +44,6 @@ _tabbro_ = function() {
             }
         }
     }
-    
     
     this.t_getWindowFromTab = function(tabid) {
         // Return the window the specified tab id belongs to
@@ -51,7 +56,6 @@ _tabbro_ = function() {
         }
     }
     
-    
     this.t_getTab = function(tabid) {
         for(var w in this.tree) {
             for(var t in this.tree[w].tabs) {
@@ -62,19 +66,16 @@ _tabbro_ = function() {
         }
     }
     
-    
     this.t_windowHasTab = function(winid, tabid) {
         // Determine if the specified window by id contains tab specified by tabid
         // TODO
     }
-    
     
     this.t_addTabtoWindow = function(winid, tab, index) {
         // Add a tab record to a window specified by winid
         var win = this.t_getWindow(winid)
         if(win) win.tabs.splice(index, 0, tab)
     }
-    
     
     this.t_removeTab = function(tabid) {
         // Removed tab record
@@ -87,7 +88,6 @@ _tabbro_ = function() {
         }
     }
     
-    
     this.t_removeWindow = function(winid) {
         // Remove window
         for(var i in this.tree) {
@@ -97,7 +97,6 @@ _tabbro_ = function() {
             }
         }
     }
-    
     
     // UI UTIL FUNCTIONS
     this.ui_delete_tab = function(winindex, tabindex) {
@@ -115,7 +114,6 @@ _tabbro_ = function() {
         this.notify()
     }
     
-    
     this.ui_delete_window = function(winindex) {
         // Delete window at windowindex
         var window = this.tree[winindex]
@@ -130,7 +128,6 @@ _tabbro_ = function() {
         this.notify()
     }
     
-    
     this.ui_stick_tab = function(winindex, tabindex) {
         // Toggle sticky state for tab at tabindex from window at windowindex
         this.tree[winindex].tabs[tabindex].sticky = !this.tree[winindex].tabs[tabindex].sticky
@@ -141,7 +138,6 @@ _tabbro_ = function() {
         this.notify()
     }
     
-    
     this.ui_stick_window = function(winindex) {
         // Toggle sticky state for window at windowindex
         this.tree[winindex].sticky = !this.tree[winindex].sticky
@@ -151,7 +147,6 @@ _tabbro_ = function() {
         }
         this.notify()
     }
-    
     
     this.ui_open_window = function(winindex) {
         var bro = this
@@ -209,7 +204,6 @@ _tabbro_ = function() {
         })
     }
     
-    
     this.ui_open_tab = function(winindex, tabindex) {
         // Open a single tab
         var tab = this.tree[winindex].tabs[tabindex]
@@ -223,12 +217,8 @@ _tabbro_ = function() {
     
     this.ui_rename_window = function(winindex, newname) {
         this.tree[winindex].name = newname
-        this.bro.notify()
+        this.notify()
     }
-    
-    
-    
-    
     
     this.getCount = function() {
         // Return count of loaded tabs
@@ -243,12 +233,10 @@ _tabbro_ = function() {
         return count;
     }
     
-    
     this.updateCount = function() {
         // Update open tab count badge
         chrome.browserAction.setBadgeText({"text":this.getCount()+""})
     }
-    
     
     // Entry point - load previous session data or create a database 
     this.load = function() {
@@ -269,8 +257,17 @@ _tabbro_ = function() {
             }
             bro.setup()
         })
+        
+        this._storage.get("tabbro_options", function(_data){
+            if(_data.tabbro_options==undefined) {
+                // Use defaults
+            } else {
+                for(var i in _data.tabbro_options) {
+                    bro.options[i] = _data.tabbro_options[i]
+                }
+            }
+        })
     }
-    
     
     this.setup = function() {
         // Set the notification color
@@ -284,7 +281,6 @@ _tabbro_ = function() {
         this.addListeners()
         //console.log("Tabbro v" + this.__VERSION + " ready!")
     }
-    
     
     this.loadInitialTree = function() {
         // Add all open windows/tabs to the database tree
@@ -322,7 +318,6 @@ _tabbro_ = function() {
             }
         })
     }
-    
     
     this.pruneData = function() {
         // If any non-sticky windows are in our data from a previous session, remove them
@@ -364,7 +359,6 @@ _tabbro_ = function() {
         //console.log("after pruneData: tree length: " + this.tree.length)
     }
     
-    
     this.pruneWindowsTabsForClose = function(win) {
         // Remove non-sticky tabs from a window
         var pruneTabs = []
@@ -380,12 +374,12 @@ _tabbro_ = function() {
         }
     }
     
-    
     this.save = function() {
         // Save data to chrome
-        //this._storage.set({"tabbro":this.data})
+        this._storage.set({"tabbro":this.data})
+        // Save options to cloud
+        this._cloudstorage.set({"tabbro_options":this.options})
     }
-    
     
     this.addListeners = function() {
         var bro = this
@@ -462,7 +456,8 @@ _tabbro_ = function() {
             tab = bro.t_getTab(tabid)
             
             if(tab) chrome.tabs.get(tabid, function(_tab) {
-                if(_tab == null || tab == null) debugger
+                if(_tab == null) debugger
+                if(tab == null) debugger
                 tab.title = _tab.title
                 tab.url = _tab.url
                 tab.pinned = _tab.pinned
@@ -550,6 +545,13 @@ _tabbro_ = function() {
             //console.log(x)
             // TODO handle when a tab is inexplicable replaced with another tab
         })
+    }
+    
+    this.update_setting = function(settingName, newValue) {
+        if(typeof(this.options[settingName]) != "undefined") {
+            this.options[settingName] = newValue
+        }
+        this.save()
     }
     
     this.load()

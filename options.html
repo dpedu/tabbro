@@ -1,14 +1,36 @@
 <!doctype html>
 <html>
     <head>
-        <title>TAB BRO</title>
+        <title>TABBRO OPTIONS</title>
         <link href="style.css" rel="stylesheet" type="text/css" />
+        <link href="libs/font-awesome-4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <script src="options.js"></script>
     </head>
-    <body>
+    <body class="options-page">
         <div class="wrapper">
-            Wello!<br>
-            <a href="popup.html">Main</a>
+            <h1>Tabbro Options</h1>
+            <ul>
+                <li>
+                    <label class="clearfix">
+                        <input type="checkbox" class="toggle" id="autoStickyTabs" value="1" />
+                        <strong>Auto-sticky tabs</strong>
+                    </label>
+                    <div class="answer">
+                        <span class="on">When a new tab is opened, it will be sticky if the parent window is sticky.</span>
+                        <span class="off">When a new tab is opened, it will not be sticky. If the parent window is closed, only stick tabs are saved.</span>
+                    </div>
+                </li>
+            </ul>
+            <br />
+            <br />
+            <br />
+            <h1>Dump Data</h1>
+            <input type="text" name="dumpout" id="dumpout" value="" />
+            <br />
+            <br />
+            <br />
+            <h1>Load Data</h1>
+            <input type="text" name="dumpin" id="dumpin" value="Paste JSON here (Not functional yet)" />
         </div>
     </body>
 </html>
-

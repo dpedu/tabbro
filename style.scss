@@ -40,6 +40,10 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+h1 {
+    font-size: 18px;
+    margin: 5px 0px 15px 0px;
+}
 /* CLEARFIX */
 .clearfix:after {
     visibility: hidden;
@@ -61,14 +65,44 @@ table {
 
 /* GLOBAL */
 body {
-    width: 420px;
-    height: auto;
-    padding: 5px 0px;
-    margin: 0;
     font-family: Open sans;
     font-size: 12px;
-    max-height: 700px;
-    overflow-y: auto;
+    
+    &.popup-page {
+        width: 420px;
+        height: auto;
+        padding: 5px 0px;
+        margin: 0;
+        max-height: 700px;
+        overflow-y: auto;
+    }
+    
+    &.options-page {
+        padding: 10px 20px;
+        .wrapper {
+            max-width: 600px;
+            margin: 0px auto;
+        }
+        input {
+            display: block;
+            &.toggle {
+                float: left;
+            }
+            &#dumpin, &#dumpout {
+                display: block;
+                width: 100%;
+            }
+        }
+        strong {
+            font-weight: bold;
+            padding: 4px 0px 10px 5px;
+            display: block;
+        }
+        .answer span {
+            display: block;
+            margin-left: 20px;
+        }
+    }
 }
 @-webkit-keyframes nopenopenope {
     0% {
