@@ -168,8 +168,11 @@ _tabbro_ = function() {
         
         // Get the window
         var win = this.tree[winindex]
-        
-        if(win.sticky) {
+        var opening_sticky = win.sticky
+        if(win.id!=null) {
+            opening_sticky = false
+        }
+        if(opening_sticky) {
             this.nextCreatedWindowIndex = winindex
         }
         
@@ -184,7 +187,7 @@ _tabbro_ = function() {
         }, function(ev) {
             
             var newwindowid = ev.id
-            if(win.sticky) {
+            if(opening_sticky) {
                 win.id = newwindowid
             }
             
@@ -203,7 +206,7 @@ _tabbro_ = function() {
             if(moreTabsToOpen.length>0) {
             
                 // Delete existing tabs after first from record
-                if(win.sticky) {
+                if(opening_sticky) {
                     win.tabs.splice(1, 9999)
                 }
                 // Recreate all tabs in new window
@@ -214,14 +217,14 @@ _tabbro_ = function() {
                         pinned:moreTabsToOpen[i].pinned
                     }, function(ev) {
                         // Mark tab as sticky again
-                        if(win.sticky) {
+                        if(opening_sticky) {
                             bro.tabs_by_id[ev.id].sticky = true
                         }
                     })
                 }
             }
             // Mark the 1st tab sticky if needed
-            if(win.sticky) {
+            if(opening_sticky) {
                 bro.t_getWindow(newwindowid).tabs[0].sticky=true
             }
         })
