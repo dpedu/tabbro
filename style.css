@@ -143,7 +143,7 @@ ul#root > li {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0px 10px 5px 10px;
+    padding: 0px 0px 5px 10px;
     font-weight: bold; }
   ul#root > li:nth-child(2n) {
     background-color: rgba(0, 0, 0, 0.05); }
@@ -165,7 +165,8 @@ ul#root > li {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      display: block; }
+      display: block;
+      padding-right: 3px; }
     ul#root > li > ul > li:nth-child(2n+1) {
       background-color: rgba(0, 0, 0, 0.05); }
 
