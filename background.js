@@ -164,16 +164,29 @@ _tabbro_ = function() {
         
         var moreTabsToOpen = win.tabs.slice(1)
         
+        var shouldpinfirst = win.tabs[0].pinned
+        
         // Open new chrome window with only the first tab from this group
         chrome.windows.create({
             focused:true,
-            url:win.tabs[0].url
+            url:win.tabs[0].url,
         }, function(ev) {
             var newwindowid = ev.id
             win.id = newwindowid
             
-            // Open the rest of the tabs in this group
+            // If the initial tab needed to be sticky, do so, and move it to 0
+            if(shouldpinfirst) {
+                chrome.tabs.update(win.tabs[0].id, {pinned:true},function() {
+                    console.log("Success!!!!")
+                })
+                chrome.tabs.move(win.tabs[0].id, {index:0},function() {
+                    console.log("Success!!!!1")
+                })
+            }
             
+            
+            // Open the rest of the tabs in this group
+            console.log(ev)
             if(moreTabsToOpen.length>0) {
             
                 // Delete existing tabs after first from record
@@ -183,7 +196,8 @@ _tabbro_ = function() {
                 for(var i in moreTabsToOpen) {
                     chrome.tabs.create({
                         windowId:win.id,
-                        url:moreTabsToOpen[i].url
+                        url:moreTabsToOpen[i].url,
+                        pinned:moreTabsToOpen[i].pinned
                     }, function(ev) {
                         // Mark tab as sticky again
                         for(var x in win.tabs) {
@@ -202,7 +216,9 @@ _tabbro_ = function() {
         chrome.windows.create({
             focused:true,
             url:tab.url
-        }, function(ev) {})
+        }, function(ev) {
+            debugger
+        })
     }
     
     this.ui_rename_window = function(winindex, newname) {
@@ -367,7 +383,7 @@ _tabbro_ = function() {
     
     this.save = function() {
         // Save data to chrome
-        this._storage.set({"tabbro":this.data})
+        //this._storage.set({"tabbro":this.data})
     }
     
     
@@ -446,6 +462,7 @@ _tabbro_ = function() {
             tab = bro.t_getTab(tabid)
             
             if(tab) chrome.tabs.get(tabid, function(_tab) {
+                if(_tab == null || tab == null) debugger
                 tab.title = _tab.title
                 tab.url = _tab.url
                 tab.pinned = _tab.pinned
