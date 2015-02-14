@@ -129,7 +129,7 @@ ul#root > li {
     background-size: 16px 16px;
     background-position: 20px center; }
     ul#root > li > ul > li > span {
-      overflow-x: hidden;
+      overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       display: block; }

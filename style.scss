@@ -152,7 +152,7 @@ ul#root {
                 background-size: 16px 16px;
                 background-position: 20px center;
                 &>span {
-                    overflow-x: hidden; 
+                    overflow: hidden; 
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     display: block;
