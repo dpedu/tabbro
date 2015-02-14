@@ -14,6 +14,10 @@ _tabbro_ = function() {
     
     // Tab tree
     this.tree = null;
+    // Chrome window ID -> our data object
+    this.windows_by_id = [];
+    // Chrome tab ID -> our data object
+    this.tabs_by_id = [];
     
     // Detached tabs
     this.detached_tabs = [];
@@ -38,11 +42,14 @@ _tabbro_ = function() {
     
     // TREE HELPERS
     this.t_getWindow = function(winid) {
-        for(var i in this.tree) {
+        /*for(var i in this.tree) {
             if(this.tree[i].id==winid) {
                 return this.tree[i]
             }
-        }
+        }*/
+        var window = this.windows_by_id[winid]
+        //if(this.tree.indexOf(window)===-1) return null
+        return window
     }
     
     this.t_getWindowFromTab = function(tabid) {
@@ -71,15 +78,17 @@ _tabbro_ = function() {
         // TODO
     }
     
-    this.t_addTabtoWindow = function(winid, tab, index) {
+    this.t_addTabtoWindow = function(winid, tabinfo, index) {
         // Add a tab record to a window specified by winid
         var win = this.t_getWindow(winid)
         if(win) {
-            win.tabs.splice(index, 0, tab)
+            win.tabs.splice(index, 0, tabinfo)
             if(this.options.autoStickyTabs && win.sticky) {
-                tab.sticky = true;
+                tabinfo.sticky = true;
             }
         }
+        this.tabs_by_id[tabinfo.id] = tabinfo
+        console.log(this.tabs_by_id[tabinfo.id])
     }
     
     this.t_removeTab = function(tabid) {
@@ -160,10 +169,12 @@ _tabbro_ = function() {
         // Get the window
         var win = this.tree[winindex]
         
-        this.nextCreatedWindowIndex = winindex
+        if(win.sticky) {
+            this.nextCreatedWindowIndex = winindex
+        }
         
         var moreTabsToOpen = win.tabs.slice(1)
-        
+        console.log("More="+moreTabsToOpen.length)
         var shouldpinfirst = win.tabs[0].pinned
         
         // Open new chrome window with only the first tab from this group
@@ -171,40 +182,47 @@ _tabbro_ = function() {
             focused:true,
             url:win.tabs[0].url,
         }, function(ev) {
+            
             var newwindowid = ev.id
-            win.id = newwindowid
+            if(win.sticky) {
+                win.id = newwindowid
+            }
             
             // If the initial tab needed to be sticky, do so, and move it to 0
             if(shouldpinfirst) {
-                chrome.tabs.update(win.tabs[0].id, {pinned:true},function() {
+                chrome.tabs.update(newwindowid, {pinned:true},function() {
                     console.log("Success!!!!")
                 })
-                chrome.tabs.move(win.tabs[0].id, {index:0},function() {
+                chrome.tabs.move(newwindowid, {index:0},function() {
                     console.log("Success!!!!1")
                 })
             }
             
             
             // Open the rest of the tabs in this group
-            console.log(ev)
             if(moreTabsToOpen.length>0) {
             
                 // Delete existing tabs after first from record
-                win.tabs.splice(1, 9999)
-                
+                if(win.sticky) {
+                    win.tabs.splice(1, 9999)
+                }
                 // Recreate all tabs in new window
                 for(var i in moreTabsToOpen) {
                     chrome.tabs.create({
-                        windowId:win.id,
+                        windowId:newwindowid,
                         url:moreTabsToOpen[i].url,
                         pinned:moreTabsToOpen[i].pinned
                     }, function(ev) {
                         // Mark tab as sticky again
-                        for(var x in win.tabs) {
-                            win.tabs[x].sticky = true
+                        if(win.sticky) {
+                            bro.tabs_by_id[ev.id].sticky = true
                         }
                     })
                 }
+            }
+            // Mark the 1st tab sticky if needed
+            if(win.sticky) {
+                bro.t_getWindow(newwindowid).tabs[0].sticky=true
             }
         })
     }
@@ -294,19 +312,22 @@ _tabbro_ = function() {
         chrome.windows.getAll(function(_windows){
             for(var w in _windows) {
                 if(_windows[w].type!="normal") continue;
-                bro.tree.push({
+                var newWindowInfo = {
                     id: _windows[w].id,
                     tabs:[],
                     sticky: false,
                     name: "Window"
-                })
+                }
+                
+                bro.tree.push(newWindowInfo)
+                bro.windows_by_id[_windows[w].id] = newWindowInfo
                 
                 // Get all tabs in this window
                 chrome.tabs.getAllInWindow(_windows[w].id, function(_tabs){
                     //console.log(_tabs)
                     for(var i in _tabs) {
                         var w = bro.t_getWindow(_tabs[i].windowId)
-                        w.tabs.push({
+                        var newTabInfo = {
                             id: _tabs[i].id,
                             title: _tabs[i].title,
                             url: _tabs[i].url,
@@ -314,7 +335,9 @@ _tabbro_ = function() {
                             name: "Tab",
                             icon: (_tabs[i].favIconUrl?_tabs[i].favIconUrl:null),
                             pinned: _tabs[i].pinned
-                        })
+                        }
+                        w.tabs.push(newTabInfo)
+                        bro.tabs_by_id[_tabs[i].id] = newTabInfo
                     }
                     bro.save()
                     // Update open tab count badge
@@ -396,17 +419,20 @@ _tabbro_ = function() {
             //console.log(e)
             
             if(bro.nextCreatedWindowIndex==null) {
-                bro.tree.push({
-                    id: e.id,
-                    tabs:[],
-                    sticky: false,
-                    name: "New Window"
-                })
+                var newWindowInfo = {
+                        id: e.id,
+                        tabs:[],
+                        sticky: false,
+                        name: "New Window"
+                    }
+                bro.tree.push(newWindowInfo)
+                bro.windows_by_id[e.id]=newWindowInfo
             } else {
                 // We were just ordered to restore a saved window
                 // bypass adding it to the tree and update the window in our tree
                 var win = bro.tree[bro.nextCreatedWindowIndex]
                 win.id = e.id
+                bro.windows_by_id[win.id]=win
                 //win.sticky = true
                 bro.nextCreatedWindowIndex = null;
             }
@@ -425,7 +451,7 @@ _tabbro_ = function() {
                 // Not sticky = delete window and contained tabs
                 bro.t_removeWindow(windowid)
             }
-            
+            bro.windows_by_id[windowid]=undefined
             bro.notify()
         })
         
