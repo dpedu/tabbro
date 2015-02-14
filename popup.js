@@ -100,7 +100,7 @@ function renderWindow(windowdata, winnum) {
                     }, 450)
                     return
                 }
-                console.log("Rename window #"+winnum+" to "+this.value)
+                //console.log("Rename window #"+winnum+" to "+this.value)
                 tabbro.ui_rename_window(winnum, this.value)
                 namestringspan.innerHTML = this.value
             }, _onkeyup:"_onblur"
@@ -164,8 +164,8 @@ function renderWindow(windowdata, winnum) {
 }
 
 function renderTab(tabdata, tabnum, winnum) {
-    console.log("renderTab("+tabdata+", "+tabnum+", "+winnum+")")
-    console.log(tabdata)
+    //console.log("renderTab("+tabdata+", "+tabnum+", "+winnum+")")
+    //console.log(tabdata)
     
     var tab = element('li', {class:"clearfix"})
     

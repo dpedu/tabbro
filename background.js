@@ -88,7 +88,7 @@ _tabbro_ = function() {
             }
         }
         this.tabs_by_id[tabinfo.id] = tabinfo
-        console.log(this.tabs_by_id[tabinfo.id])
+        //console.log(this.tabs_by_id[tabinfo.id])
     }
     
     this.t_removeTab = function(tabid) {
@@ -177,7 +177,7 @@ _tabbro_ = function() {
         }
         
         var moreTabsToOpen = win.tabs.slice(1)
-        console.log("More="+moreTabsToOpen.length)
+        //console.log("More="+moreTabsToOpen.length)
         var shouldpinfirst = win.tabs[0].pinned
         
         // Open new chrome window with only the first tab from this group
@@ -194,10 +194,10 @@ _tabbro_ = function() {
             // If the initial tab needed to be sticky, do so, and move it to 0
             if(shouldpinfirst) {
                 chrome.tabs.update(newwindowid, {pinned:true},function() {
-                    console.log("Success!!!!")
+                    //console.log("Success!!!!")
                 })
                 chrome.tabs.move(newwindowid, {index:0},function() {
-                    console.log("Success!!!!1")
+                    //console.log("Success!!!!1")
                 })
             }
             
@@ -418,7 +418,7 @@ _tabbro_ = function() {
         // Add window listeners
         chrome.windows.onCreated.addListener(function(e) {
             if(e.type!="normal") return
-            console.log("windows.onCreated: "+e.id)
+            //console.log("windows.onCreated: "+e.id)
             //console.log(e)
             
             if(bro.nextCreatedWindowIndex==null) {
@@ -442,7 +442,7 @@ _tabbro_ = function() {
         })
         
         chrome.windows.onRemoved.addListener(function(windowid) {
-            console.log("windows.onRemoved")
+            //console.log("windows.onRemoved")
             //console.log(windowid)
             var thewindow = bro.t_getWindow(windowid)
             if(thewindow.sticky) {
@@ -465,7 +465,7 @@ _tabbro_ = function() {
         
         // Add tab listeners
         chrome.tabs.onCreated.addListener(function(e) {
-            console.log("tabs.onCreated")
+            //console.log("tabs.onCreated")
             //console.log(e)
             bro.t_addTabtoWindow(e.windowId, {
                 id: e.id,
@@ -499,7 +499,7 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onMoved.addListener(function(tabid) {
-            console.log("tabs.onMoved "+tabid)
+            //console.log("tabs.onMoved "+tabid)
             
             // Fetch tab
             chrome.tabs.get(tabid, function(_tab) {
@@ -551,7 +551,7 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onRemoved.addListener(function(tabid) {
-            console.log("tabs.onRemoved "+tabid)
+            //console.log("tabs.onRemoved "+tabid)
             //console.log(tabid)
             
             
