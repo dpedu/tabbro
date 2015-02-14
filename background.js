@@ -74,9 +74,11 @@ _tabbro_ = function() {
     this.t_addTabtoWindow = function(winid, tab, index) {
         // Add a tab record to a window specified by winid
         var win = this.t_getWindow(winid)
-        if(win) win.tabs.splice(index, 0, tab)
-        if(this.options.autoStickyTabs && win.sticky) {
-            tab.sticky = true;
+        if(win) {
+            win.tabs.splice(index, 0, tab)
+            if(this.options.autoStickyTabs && win.sticky) {
+                tab.sticky = true;
+            }
         }
     }
     
