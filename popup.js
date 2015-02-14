@@ -68,7 +68,7 @@ function renderTree(data) {
 }
 
 function renderWindow(windowdata, winnum) {
-    var win = element('li', {class:(windowdata.sticky?"sticky":"")});
+    var win = element('li', {class:(windowdata.sticky?"sticky":"")+(windowdata.id==null?" unloaded":" loaded")});
     
     var label = element('span', {class:"name-line", _parent:win})
     var label_icon = element('span', {class:"name-icon", _parent:label, _html:(windowdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')})
@@ -112,19 +112,20 @@ function renderWindow(windowdata, winnum) {
     
     var options = element('div', {class:"options", _parent:win})
     
-    var stickunstick = element('a', {
-        class:"unstick"+(windowdata.sticky?" stuck":""),
-        _onclick: function() {
-            //console.log("Stuck window #"+winnum)
-            tabbro.ui_stick_window(winnum)
-            repaint()
-        },
-        href: "#",
-        title: (windowdata.sticky?"Unstick tab":"Stick window"),
-        _html:(windowdata.sticky?'<i class="fa fa-minus-circle"></i>':'<i class="fa fa-thumb-tack"></i>'),
-        _parent:options
-    })
-    
+    if(windowdata.id!=null) {
+        var stickunstick = element('a', {
+            class:"unstick"+(windowdata.sticky?" stuck":""),
+            _onclick: function() {
+                //console.log("Stuck window #"+winnum)
+                tabbro.ui_stick_window(winnum)
+                repaint()
+            },
+            href: "#",
+            title: (windowdata.sticky?"Unstick tab":"Stick window"),
+            _html:(windowdata.sticky?'<i class="fa fa-minus-circle"></i>':'<i class="fa fa-thumb-tack"></i>'),
+            _parent:options
+        })
+    }
     
     var deletewindow = element('a', {
         class:"delete",
@@ -138,20 +139,6 @@ function renderWindow(windowdata, winnum) {
         _html:'<i class="fa fa-times"></i>',
         _parent:options
     })
-    
-    /*var rename = element('a', {
-        class:"rename",
-        _onclick: function() {
-            //console.log("Open window #"+winnum)
-            //tabbro.ui_open_window(winnum)
-            repaint()
-        },
-        href: "#",
-        title: "Info",
-        _html:'<i class="fa fa-info-circle"></i>',
-        _parent:options
-    })*/
-    
     
     var opennew = element('a', {
         class:"open",
@@ -177,7 +164,11 @@ function renderWindow(windowdata, winnum) {
 }
 
 function renderTab(tabdata, tabnum, winnum) {
+    console.log("renderTab("+tabdata+", "+tabnum+", "+winnum+")")
+    console.log(tabdata)
+    
     var tab = element('li', {class:"clearfix"})
+    
     if(tabdata.icon && tabdata.icon.substr(0, 9)!="chrome://") {
         tab.style.backgroundImage = "url(\""+tabdata.icon+"\")";
     } else {
@@ -186,7 +177,7 @@ function renderTab(tabdata, tabnum, winnum) {
     
     var label = element('span', {class:"name-line", _parent:tab})
     var label_icon = element('span', {class:"name-icon", _parent:label, _html:(tabdata.sticky?'<i class="fa fa-thumb-tack"></i> ':'')})
-    var label_name = element('span', {class:"name-string", _parent:label, _html:tabdata.title})
+    var label_name = element('span', {class:"name-string", _parent:label, _html:tabdata.title.trim()==""?"(No title)":tabdata.title})
     
     var options = element('div', {class:"options", _parent:tab})
     
@@ -202,7 +193,6 @@ function renderTab(tabdata, tabnum, winnum) {
         _html:(tabdata.sticky?'<i class="fa fa-minus-circle"></i>':'<i class="fa fa-thumb-tack"></i>'),
         _parent:options
     })
-    
     
     var deletetab = element('a', {
         class:"delete",

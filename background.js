@@ -170,6 +170,8 @@ _tabbro_ = function() {
             url:win.tabs[0].url
         }, function(ev) {
             var newwindowid = ev.id
+            win.id = newwindowid
+            
             // Open the rest of the tabs in this group
             
             if(moreTabsToOpen.length>0) {
@@ -519,7 +521,7 @@ _tabbro_ = function() {
             var thetab = bro.t_getTab(tabid)
             
             
-            if(thetab.sticky) {
+            if(thetab && thetab.sticky) {
                 // If the tab is sticky, we only mark it as closed
                 thetab.id = null
             } else {

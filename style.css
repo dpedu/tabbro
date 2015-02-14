@@ -1,7 +1,8 @@
 /* RESET */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:700,400);
 * {
-    box-sizing: border-box;
-}
+  box-sizing: border-box; }
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -15,136 +16,124 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
 body {
-    line-height: 1;
-}
+  line-height: 1; }
+
 ol, ul {
-    list-style: none;
-}
+  list-style: none; }
+
 blockquote, q {
-    quotes: none;
-}
+  quotes: none; }
+
 blockquote:before, blockquote:after,
 q:before, q:after {
-    content: '';
-    content: none;
-}
+  content: '';
+  content: none; }
+
 table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
+  border-collapse: collapse;
+  border-spacing: 0; }
+
 /* CLEARFIX */
 .clearfix:after {
-    visibility: hidden;
-    display: block;
-    font-size: 0;
-    content: " ";
-    clear: both;
-    height: 0;
-}
-.clearfix { display: inline-block; }
-* html .clearfix { height: 1%; }
-.clearfix { display: block; }
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
+
+.clearfix {
+  display: inline-block; }
+
+* html .clearfix {
+  height: 1%; }
+
+.clearfix {
+  display: block; }
 
 /* FONTS */
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:700,400);
-
-
 /* STYLES */
-
 /* GLOBAL */
 body {
-    width: 420px;
-    height: auto;
-    padding: 5px 0px;
-    margin: 0;
-    font-family: Open sans;
-    font-size: 12px;
-    max-height: 700px;
-    overflow-y: auto;
-}
-@-webkit-keyframes nopenopenope {
-    0% {
-        left: 0px;
-    }
-    25% {
-        left: -10px;
-    }
-    75% {
-        left: 10px;
-    }
-    100% {
-        left: 0px;
-    }
-}
-.nope {
-    position: relative;
-    -webkit-animation: nopenopenope .15s linear 0s 3 normal;
-}
+  width: 420px;
+  height: auto;
+  padding: 5px 0px;
+  margin: 0;
+  font-family: Open sans;
+  font-size: 12px;
+  max-height: 700px;
+  overflow-y: auto; }
 
+@-webkit-keyframes nopenopenope {
+  0% {
+    left: 0px; }
+  25% {
+    left: -10px; }
+  75% {
+    left: 10px; }
+  100% {
+    left: 0px; } }
+.nope {
+  position: relative;
+  -webkit-animation: nopenopenope .15s linear 0s 3 normal; }
 
 /* Options panel appears on hove */
 .options {
-    position: absolute;
-    top: -3px;
-    right: 10px;
-    display: none;
-    background-color: #fff;
-    padding: 3px;
-    border: 1px solid #aaa;
-}
-.options a {
-    font-size: 20px;
-    padding: 3px;
-}
-li:hover>.options, li:hover>span>.options {
-    display: block;
-}
+  position: absolute;
+  top: 3px;
+  right: 0px;
+  display: none;
+  padding: 0px;
+  font-size: 16px; }
+  .options a {
+    padding: 0px 3px;
+    color: #888; }
+    .options a.delete {
+      position: relative;
+      bottom: 1px; }
+    .options a:hover {
+      color: #000; }
 
-
+li:hover > .options, li:hover > span > .options {
+  display: block; }
 
 /* MAIN TREE */
-ul#root {
-    
-}
-ul#root > li:nth-child(2n) {
-    background-color: rgba(0,0,0,0.05);
-}
-ul#root > li > span {
+ul#root li {
+  position: relative;
+  padding: 5px 0px; }
+ul#root > li {
+  padding-bottom: 0px;
+  border-bottom: 1px solid #888; }
+  ul#root > li:last-child {
+    border-bottom: 0px; }
+  ul#root > li > span {
     display: block;
     padding: 0px 10px 5px 10px;
-    font-weight: bold;
-}
-ul#root li {
-    position: relative;
-    padding: 5px 0px;
-}
-ul#root > li {
-    padding-bottom: 0px;
-    border-bottom: 1px solid #888;
-}
-ul#root > li:last-child {
-    border-bottom: 0px;
-}
-ul#root > li > ul > li {
+    font-weight: bold; }
+  ul#root > li:nth-child(2n) {
+    background-color: rgba(0, 0, 0, 0.05); }
+  ul#root > li.unloaded span.name-line {
+    font-style: italic;
+    color: #AAA; }
+  ul#root > li > ul > li {
     padding-left: 40px;
     background-repeat: no-repeat;
     background-size: 16px 16px;
-    background-position: 20px center;
-}
-ul#root > li > ul > li > span {
-    overflow-x: hidden; 
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-}
-ul#root > li > ul > li:nth-child(2n+1) {
-    background-color: rgba(0,0,0,0.05);
-}
+    background-position: 20px center; }
+    ul#root > li > ul > li > span {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block; }
+    ul#root > li > ul > li:nth-child(2n+1) {
+      background-color: rgba(0, 0, 0, 0.05); }
+
+/*# sourceMappingURL=style.css.map */
