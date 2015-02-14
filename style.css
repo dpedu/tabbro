@@ -138,20 +138,29 @@ ul#root > li {
   border-bottom: 1px solid #888; }
   ul#root > li:last-child {
     border-bottom: 0px; }
-  ul#root > li > span {
+  ul#root > li > span.name-line {
     display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     padding: 0px 10px 5px 10px;
     font-weight: bold; }
   ul#root > li:nth-child(2n) {
     background-color: rgba(0, 0, 0, 0.05); }
+  ul#root > li:hover > span.name-line {
+    padding-right: 62px; }
   ul#root > li.unloaded span.name-line {
     font-style: italic;
     color: #AAA; }
+  ul#root > li.unloaded:hover > span.name-line {
+    padding-right: 41px; }
   ul#root > li > ul > li {
     padding-left: 40px;
     background-repeat: no-repeat;
     background-size: 16px 16px;
     background-position: 20px center; }
+    ul#root > li > ul > li:hover {
+      padding-right: 62px; }
     ul#root > li > ul > li > span {
       overflow: hidden;
       text-overflow: ellipsis;

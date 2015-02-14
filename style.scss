@@ -165,26 +165,39 @@ ul#root {
         &:last-child {
             border-bottom: 0px;
         }
-        &> span {
+        &> span.name-line {
             display: block;
+            overflow: hidden; 
+            text-overflow: ellipsis;
+            white-space: nowrap;
             padding: 0px 10px 5px 10px;
             font-weight: bold;
         }
         &:nth-child(2n) {
             background-color: rgba(0,0,0,0.05);
         }
+        &:hover>span.name-line {
+            padding-right: 62px;
+        }
         &.unloaded {
             span.name-line {
                 font-style: italic;
                 color: #AAA;
             }
+            &:hover>span.name-line {
+                padding-right: 41px;
+            }
         }
+        
         &>ul {
             &>li {
                 padding-left: 40px;
                 background-repeat: no-repeat;
                 background-size: 16px 16px;
                 background-position: 20px center;
+                &:hover {
+                    padding-right: 62px;
+                }
                 &>span {
                     overflow: hidden; 
                     text-overflow: ellipsis;
