@@ -42,12 +42,12 @@ _tabbro_ = function() {
     
     // TREE HELPERS
     this.t_getWindow = function(winid) {
-        /*for(var i in this.tree) {
+        for(var i in this.tree) {
             if(this.tree[i].id==winid) {
                 return this.tree[i]
             }
-        }*/
-        var window = this.windows_by_id[winid]
+        }
+        //var window = this.windows_by_id[winid]
         //if(this.tree.indexOf(window)===-1) return null
         return window
     }
@@ -64,9 +64,9 @@ _tabbro_ = function() {
     }
     
     this.t_getTab = function(tabid) {
-        if(this.tabs_by_id[tabid]) {
-            return this.tabs_by_id[tabid]
-        }
+        //if(this.tabs_by_id[tabid]) {
+        //    return this.tabs_by_id[tabid]
+        //}
         for(var w in this.tree) {
             for(var t in this.tree[w].tabs) {
                 if(this.tree[w].tabs[t].id==tabid) {
@@ -176,7 +176,12 @@ _tabbro_ = function() {
         
         var moreTabsToOpen = win.tabs.slice(1)
         //console.log("More="+moreTabsToOpen.length)
-        var shouldpinfirst = win.tabs[0].pinned
+        
+        // If the initial tab needed to be sticky, do so, and move it to 0 - handled in tab oncreate listener
+        if(win.tabs[0].pinned) {
+            this.pinNextCreatedTab = true;
+        }
+        
         
         // Open new chrome window with only the first tab from this group
         chrome.windows.create({
@@ -188,17 +193,6 @@ _tabbro_ = function() {
             if(opening_sticky) {
                 win.id = newwindowid
             }
-            
-            // If the initial tab needed to be sticky, do so, and move it to 0
-            if(shouldpinfirst) {
-                chrome.tabs.update(newwindowid, {pinned:true},function() {
-                    //console.log("Success!!!!")
-                })
-                chrome.tabs.move(newwindowid, {index:0},function() {
-                    //console.log("Success!!!!1")
-                })
-            }
-            
             
             // Open the rest of the tabs in this group
             if(moreTabsToOpen.length>0) {
@@ -405,7 +399,7 @@ _tabbro_ = function() {
     
     this.save = function() {
         // Save data to chrome
-        this._storage.set({"tabbro":this.data})
+        //this._storage.set({"tabbro":this.data})
         // Save options to cloud
         this._cloudstorage.set({"tabbro_options":this.options})
     }
@@ -465,13 +459,28 @@ _tabbro_ = function() {
         chrome.tabs.onCreated.addListener(function(e) {
             //console.log("tabs.onCreated")
             //console.log(e)
+            
+            var pinned = e.pinned
+            
+            if(bro.pinNextCreatedTab) {
+                bro.pinNextCreatedTab=false
+                chrome.tabs.update(e.id, {pinned:true},function() {
+                    //console.log("Success!!!!")
+                })
+                chrome.tabs.move(e.id, {index:0},function() {
+                    //console.log("Success!!!!1")
+                })
+                pinned=true
+            }
+            
+            
             bro.t_addTabtoWindow(e.windowId, {
                 id: e.id,
                 title: e.title,
                 url: e.url,
                 sticky: false,
                 name: "",
-                pinned: e.pinned
+                pinned: pinned
             }, e.index)
             
             bro.notify()
