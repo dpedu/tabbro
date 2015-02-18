@@ -64,6 +64,9 @@ _tabbro_ = function() {
     }
     
     this.t_getTab = function(tabid) {
+        if(this.tabs_by_id[tabid]) {
+            return this.tabs_by_id[tabid]
+        }
         for(var w in this.tree) {
             for(var t in this.tree[w].tabs) {
                 if(this.tree[w].tabs[t].id==tabid) {
@@ -71,11 +74,6 @@ _tabbro_ = function() {
                 }
             }
         }
-    }
-    
-    this.t_windowHasTab = function(winid, tabid) {
-        // Determine if the specified window by id contains tab specified by tabid
-        // TODO
     }
     
     this.t_addTabtoWindow = function(winid, tabinfo, index) {
