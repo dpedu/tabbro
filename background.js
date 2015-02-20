@@ -574,7 +574,7 @@ _tabbro_ = function() {
             var thetab = bro.t_getTab(tabid)
             
             
-            if(thetab && thetab.sticky) {
+            if(thetab && thetab.sticky && !bro.options.pruneStickyTabs) {
                 // If the tab is sticky, we only mark it as closed
                 thetab.id = null
             } else {
