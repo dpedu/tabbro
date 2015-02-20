@@ -98,6 +98,13 @@ _tabbro_ = function() {
         for(var i in thewindow.tabs) {
             if(thewindow.tabs[i].id == tabid) {
                 thewindow.tabs.splice(i, 1)
+                
+                // Check if the tab has 0 windows now - remove it if it does
+                // TODO fix this
+                if(thewindow.tabs.length == 0) {
+                    this.t_removeWindow(thewindow.id)
+                }
+                
                 return
             }
         }
@@ -574,7 +581,7 @@ _tabbro_ = function() {
             var thetab = bro.t_getTab(tabid)
             
             
-            if(thetab && thetab.sticky && !bro.options.pruneStickyTabs) {
+            if(thetab && thetab.sticky) {
                 // If the tab is sticky, we only mark it as closed
                 thetab.id = null
             } else {
