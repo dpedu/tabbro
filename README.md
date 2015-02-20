@@ -1,7 +1,7 @@
 TODO
 ====
 
-- Revert pinned tab names to the originally pinned title
+- Save windows in custom categories
+- Try to weed out blank or 'loading' titles
 - Edit saved windows/tabs (crud)
-- Save groups by name on a second screen?
 - Improve UI
