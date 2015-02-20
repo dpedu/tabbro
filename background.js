@@ -408,7 +408,7 @@ _tabbro_ = function() {
     
     this.save = function() {
         // Save data to chrome
-        //this._storage.set({"tabbro":this.data})
+        this._storage.set({"tabbro":this.data})
         // Save options to cloud
         this._cloudstorage.set({"tabbro_options":this.options})
     }
