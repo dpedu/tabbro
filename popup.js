@@ -167,7 +167,7 @@ function renderTab(tabdata, tabnum, winnum) {
     //console.log("renderTab("+tabdata+", "+tabnum+", "+winnum+")")
     //console.log(tabdata)
     
-    var tab = element('li', {class:"clearfix"})
+    var tab = element('li', {class:"clearfix "+(tabdata.id==null?'unloaded':'loaded')})
     
     if(tabdata.icon && tabdata.icon.substr(0, 9)!="chrome://") {
         tab.style.backgroundImage = "url(\""+tabdata.icon+"\")";

@@ -167,6 +167,8 @@ ul#root > li {
       white-space: nowrap;
       display: block;
       padding-right: 3px; }
+    ul#root > li > ul > li.unloaded > span {
+      color: #AAA; }
     ul#root > li > ul > li:nth-child(2n+1) {
       background-color: rgba(0, 0, 0, 0.05); }
 

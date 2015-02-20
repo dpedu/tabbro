@@ -205,6 +205,11 @@ ul#root {
                     display: block;
                     padding-right: 3px;
                 }
+                &.unloaded {
+                    &>span {
+                        color: #AAA;
+                    }
+                }
                 &:nth-child(2n+1) {
                     background-color: rgba(0,0,0,0.05);
                 }

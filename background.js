@@ -1,9 +1,9 @@
-
 _tabbro_ = function() {
     
     // Options
     this.options = {
         "autoStickyTabs":true,
+        "pruneStickyTabs":true
     }
     
     // Database version
@@ -92,6 +92,9 @@ _tabbro_ = function() {
     this.t_removeTab = function(tabid) {
         // Removed tab record
         var thewindow = this.t_getWindowFromTab(tabid)
+        // If the window is missing, it was probably ignored because we ignore non-"normal" windows
+        //if(typeof thewindow == "undefined") return 
+        
         for(var i in thewindow.tabs) {
             if(thewindow.tabs[i].id == tabid) {
                 thewindow.tabs.splice(i, 1)
@@ -229,7 +232,9 @@ _tabbro_ = function() {
             focused:true,
             url:tab.url
         }, function(ev) {
-            debugger
+            //debugger
+            console.log("ui_open_tab")
+            console.log(ev)
         })
     }
     
@@ -306,7 +311,7 @@ _tabbro_ = function() {
         // Get all windows
         chrome.windows.getAll(function(_windows){
             for(var w in _windows) {
-                if(_windows[w].type!="normal") continue;
+                //if(_windows[w].type!="normal") continue;
                 var newWindowInfo = {
                     id: _windows[w].id,
                     tabs:[],
@@ -399,7 +404,7 @@ _tabbro_ = function() {
     
     this.save = function() {
         // Save data to chrome
-        //this._storage.set({"tabbro":this.data})
+        this._storage.set({"tabbro":this.data})
         // Save options to cloud
         this._cloudstorage.set({"tabbro_options":this.options})
     }
@@ -409,8 +414,8 @@ _tabbro_ = function() {
         
         // Add window listeners
         chrome.windows.onCreated.addListener(function(e) {
-            if(e.type!="normal") return
-            //console.log("windows.onCreated: "+e.id)
+            //if(e.type!="normal") return
+            console.log("windows.onCreated: "+e.id)
             //console.log(e)
             
             if(bro.nextCreatedWindowIndex==null) {
@@ -434,7 +439,7 @@ _tabbro_ = function() {
         })
         
         chrome.windows.onRemoved.addListener(function(windowid) {
-            //console.log("windows.onRemoved")
+            console.log("windows.onRemoved")
             //console.log(windowid)
             var thewindow = bro.t_getWindow(windowid)
             if(thewindow.sticky) {
@@ -457,7 +462,7 @@ _tabbro_ = function() {
         
         // Add tab listeners
         chrome.tabs.onCreated.addListener(function(e) {
-            //console.log("tabs.onCreated")
+            console.log("tabs.onCreated")
             //console.log(e)
             
             var pinned = e.pinned
@@ -487,14 +492,15 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onUpdated.addListener(function(tabid) {
+            console.log("tabs.onUpdated "+tabid)
             // TODO loading indicator when a tab is loading
             // TOOO determine if other attributes need to be tracked
             // Update tab title
             tab = bro.t_getTab(tabid)
             
             if(tab) chrome.tabs.get(tabid, function(_tab) {
-                if(_tab == null) debugger
-                if(tab == null) debugger
+                //if(_tab == null) debugger
+                //if(tab == null) debugger
                 tab.title = _tab.title
                 tab.url = _tab.url
                 tab.pinned = _tab.pinned
@@ -506,7 +512,7 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onMoved.addListener(function(tabid) {
-            //console.log("tabs.onMoved "+tabid)
+            console.log("tabs.onMoved "+tabid)
             
             // Fetch tab
             chrome.tabs.get(tabid, function(_tab) {
@@ -526,18 +532,19 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onActivated.addListener(function(x) {
-            //console.log("tabs.onActivated")
-            //console.log(x)
+            console.log("tabs.onActivated")
+            console.log(x)
             // TODO indicate that this tab is the active one
         })
         
         chrome.tabs.onHighlighted.addListener(function(x) {
-            //console.log("tabs.onHighlighted")
-            //console.log(x)
+            console.log("tabs.onHighlighted")
+            console.log(x)
             // This seems the same as tabs.onActivated?
         })
         
         chrome.tabs.onDetached.addListener(function(tabid) {
+            console.log("tabs.onDetached "+tabid)
             // Remove tab from it's window
             var tab = bro.t_getTab(tabid)
             bro.t_removeTab(tabid)
@@ -547,6 +554,7 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onAttached.addListener(function(tabid) {
+            console.log("tabs.onAttached "+tabid)
             // Remove from bro.detached_tabs
             var tab = bro.detached_tabs.splice(tabid, 1)[0]
             
@@ -558,7 +566,7 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onRemoved.addListener(function(tabid) {
-            //console.log("tabs.onRemoved "+tabid)
+            console.log("tabs.onRemoved "+tabid)
             //console.log(tabid)
             
             
@@ -578,7 +586,7 @@ _tabbro_ = function() {
         })
         
         chrome.tabs.onReplaced.addListener(function(x) {
-            //console.log("tabs.onReplaced")
+            console.log("tabs.onReplaced")
             //console.log(x)
             // TODO handle when a tab is inexplicable replaced with another tab
         })
