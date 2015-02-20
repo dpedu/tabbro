@@ -2,8 +2,7 @@ _tabbro_ = function() {
     
     // Options
     this.options = {
-        "autoStickyTabs":true,
-        "pruneStickyTabs":true
+        "autoStickyTabs":true
     }
     
     // Database version
@@ -98,13 +97,6 @@ _tabbro_ = function() {
         for(var i in thewindow.tabs) {
             if(thewindow.tabs[i].id == tabid) {
                 thewindow.tabs.splice(i, 1)
-                
-                // Check if the tab has 0 windows now - remove it if it does
-                // TODO fix this
-                if(thewindow.tabs.length == 0) {
-                    this.t_removeWindow(thewindow.id)
-                }
-                
                 return
             }
         }
@@ -130,8 +122,13 @@ _tabbro_ = function() {
         if(tab.id!=null) {
             chrome.tabs.remove(tab.id)
         } else {
-            // Delete from tree
-            this.tree[winindex].tabs.splice(tabindex, 1)
+            // Check if the window will have 0 tabs - delete the window it if it does, tab is taken with it
+            if(this.tree[winindex].tabs.length == 1) {
+                this.tree.splice(winindex,1)
+            } else {
+                // Delete from it's window
+                this.tree[winindex].tabs.splice(tabindex, 1)
+            }
         }
         this.notify()
     }
@@ -411,7 +408,7 @@ _tabbro_ = function() {
     
     this.save = function() {
         // Save data to chrome
-        this._storage.set({"tabbro":this.data})
+        //this._storage.set({"tabbro":this.data})
         // Save options to cloud
         this._cloudstorage.set({"tabbro_options":this.options})
     }
