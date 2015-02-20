@@ -45,6 +45,31 @@ function setup() {
         this.value = JSON.stringify(tabbro.tree)
     }
     
-    
+    var dumpin = document.getElementById("dumpin")
+    dumpin.onchange=function() {
+        var data = JSON.parse(this.value)
+        var windows = 0;
+        var tabs = 0;
+        for(var w in data) {
+            data[w].sticky = true
+            data[w].id = null
+            windows++
+            for(var t in data[w].tabs) {
+                data[w].tabs[t].sticky = true
+                data[w].tabs[t].id = null
+                tabs++
+            }
+        }
+        if(confirm("Replace all tabbro data?\n\nWindows: "+windows+"\nTabs: "+tabs)) {
+            tabbro.data.tree.splice(0, tabbro.data.tree.length)
+            for(var w in data) {
+                tabbro.data.tree.push(data[w])
+            }
+            tabbro.save()
+            tabbro.loadInitialTree()
+            alert("Done!")
+            this.value="Paste JSON here"
+        }
+    }
 }
 

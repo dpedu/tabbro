@@ -300,13 +300,18 @@ _tabbro_ = function() {
         // Set the notification color
         chrome.browserAction.setBadgeBackgroundColor({"color":"#990000"})
         
+        // Set up the data tree
+        this.initializeTree()
+        // Add evnt listeners
+        this.addListeners()
+        //console.log("Tabbro v" + this.__VERSION + " ready!")
+    }
+    
+    this.initializeTree = function() {
         // If any non-sticky windows are in our data from a previous session, remove them
         this.pruneData(); 
         // Add all open windows/tabs to the database tree
         this.loadInitialTree()
-        // Add evnt listeners
-        this.addListeners()
-        //console.log("Tabbro v" + this.__VERSION + " ready!")
     }
     
     this.loadInitialTree = function() {
